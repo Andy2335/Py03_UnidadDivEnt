@@ -11,7 +11,7 @@ SOURCES = \
 	$(wildcard $(MODULOS)/Teclado/*.sv) \
 	$(wildcard $(MODULOS)/Control/*.sv) \
 	$(wildcard $(MODULOS)/Calculo_Suma/*.sv) \
-	$(wildcard $(MODULOS)/Display_7seg/*.sv) \
+	$(wildcard $(MODULOS)/Display_7Seg/*.sv) \
 	$(DESIGN)/top.sv
 
 TESTBENCH = ../sim/tb_top.sv
