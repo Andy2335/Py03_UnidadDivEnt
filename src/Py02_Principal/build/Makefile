@@ -11,7 +11,7 @@ SOURCES = \
 	$(wildcard $(MODULOS)/Teclado/*.sv) \
 	$(wildcard $(MODULOS)/Control/*.sv) \
 	$(wildcard $(MODULOS)/Calculo_Suma/*.sv) \
-	$(wildcard $(MODULOS)/Display_7seg/*.sv) \
+	$(wildcard $(MODULOS)/Display_7Seg/*.sv) \
 	$(DESIGN)/top.sv
 
 TESTBENCH = ../sim/tb_top.sv
@@ -37,7 +37,7 @@ synth: ${SOURCES}
 
 pnr: ${PROYECT}.json
 	@echo "Ejecutando el pnr..."
-	nextpnr-gowin --json ${PROYECT}.json --write ${PROYECT}_pnr.json --freq 18 --device ${DEVICE} --family ${FAMILY} --cst ${CONSTRAINTS} > pnr_${BOARD}.log 2>&1
+	nextpnr-gowin --json ${PROYECT}.json --write ${PROYECT}_pnr.json --freq 16 --device ${DEVICE} --family ${FAMILY} --cst ${CONSTRAINTS} > pnr_${BOARD}.log 2>&1
 	@echo "COMPLETADO"
 
 bitstream: ${PROYECT}_pnr.json

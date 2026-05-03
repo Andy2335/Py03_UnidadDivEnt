@@ -13,28 +13,57 @@ module constructor_numero #(
     output logic              lleno
 );
 
-    assign lleno = (cantidad_digitos == MAX_DIGITOS);
+    // Registrar entradas 1 ciclo para alinear con logica combinacional de la FSM
+    logic              cargar_digito_r;
+    logic [3:0]        digito_r;
 
     always_ff @(posedge clk) begin
-        if (rst || limpiar) begin
+        if (rst) begin
+            cargar_digito_r <= 1'b0;
+            digito_r        <= 4'd0;
+        end else begin
+            cargar_digito_r <= cargar_digito;
+            digito_r        <= digito;
+        end
+    end
+
+    logic es_digito;
+    logic [WIDTH-1:0] digito_ext;
+    logic [WIDTH-1:0] numero_x10;
+    logic [WIDTH-1:0] numero_next;
+
+    assign es_digito  = (digito_r == 4'd0) || (digito_r == 4'd1) ||
+                        (digito_r == 4'd2) || (digito_r == 4'd3) ||
+                        (digito_r == 4'd4) || (digito_r == 4'd5) ||
+                        (digito_r == 4'd6) || (digito_r == 4'd7) ||
+                        (digito_r == 4'd8) || (digito_r == 4'd9);
+
+    assign lleno = (cantidad_digitos >= MAX_DIGITOS);
+
+    always_comb begin
+        digito_ext  = {{(WIDTH-4){1'b0}}, digito_r};
+        numero_x10  = (numero << 3) + (numero << 1);
+        numero_next = numero;
+
+        if (cargar_digito_r && !lleno && es_digito) begin
+            if (cantidad_digitos == 2'd0)
+                numero_next = digito_ext;
+            else
+                numero_next = numero_x10 + digito_ext;
+        end
+    end
+
+    always_ff @(posedge clk) begin
+        if (rst) begin
             numero           <= '0;
             cantidad_digitos <= 2'd0;
-        end else begin
-            if (cargar_digito && !lleno && digito <= 4'd9) begin
-                numero           <= (numero * 10) + digito;
-                cantidad_digitos <= cantidad_digitos + 1'b1;
-            end
+        end else if (limpiar) begin
+            numero           <= '0;
+            cantidad_digitos <= 2'd0;
+        end else if (cargar_digito_r && !lleno && es_digito) begin
+            numero           <= numero_next;
+            cantidad_digitos <= cantidad_digitos + 2'd1;
         end
     end
 
 endmodule
-
-/*
-Este módulo se encarga de construir el número completo a partir de los dígitos que el 
-usuario va presionando en el teclado. Cada tecla llega como un valor de 4 bits (0–9), 
-y el módulo va formando el número como una calculadora: multiplica el valor anterior 
-por 10 y le suma el nuevo dígito. Por ejemplo, si se presiona 1, luego 2 y luego 3, 
-el resultado almacenado será 123. También controla cuántos dígitos se han ingresado 
-y activa la señal lleno cuando se llega al máximo permitido, que en este proyecto son 
-3 dígitos.
-*/
