@@ -16,98 +16,71 @@ module control_entrada_fsm(
     output logic [1:0] seleccion_display
 );
 
-    typedef enum logic [1:0] {
-        INGRESO_A = 2'd0,
-        INGRESO_B = 2'd1,
-        MOSTRAR_RESULTADO = 2'd2
-    } estado_t;
+    localparam [1:0] INGRESO_A         = 2'd0;
+    localparam [1:0] INGRESO_B         = 2'd1;
+    localparam [1:0] MOSTRAR_RESULTADO = 2'd2;
 
-    estado_t estado_actual, estado_siguiente;
+    logic [1:0] estado;
 
-    localparam logic [3:0] TECLA_A = 4'hA;
-    localparam logic [3:0] TECLA_B = 4'hB;
-    localparam logic [3:0] TECLA_C = 4'hC;
-    localparam logic [3:0] TECLA_D = 4'hD;
+    logic es_digito;
+    assign es_digito = (key_code == 4'd0) || (key_code == 4'd1) ||
+                       (key_code == 4'd2) || (key_code == 4'd3) ||
+                       (key_code == 4'd4) || (key_code == 4'd5) ||
+                       (key_code == 4'd6) || (key_code == 4'd7) ||
+                       (key_code == 4'd8) || (key_code == 4'd9);
 
-    function automatic logic es_digito(input logic [3:0] tecla);
-        es_digito = (tecla <= 4'd9);
-    endfunction
-
+    // Estado registrado
     always_ff @(posedge clk) begin
-        if (rst)
-            estado_actual <= INGRESO_A;
-        else
-            estado_actual <= estado_siguiente;
+        if (rst) estado <= INGRESO_A;
+        else begin
+            if (key_valid) begin
+                if (key_code == 4'hC || key_code == 4'hD)
+                    estado <= INGRESO_A;
+                else begin
+                    case (estado)
+                        INGRESO_A: if (key_code == 4'hE) estado <= INGRESO_B;
+                        INGRESO_B: if (key_code == 4'hF) estado <= MOSTRAR_RESULTADO;
+                        default: ;
+                    endcase
+                end
+            end
+        end
     end
 
+    // Salidas combinacionales puras
     always_comb begin
-        estado_siguiente = estado_actual;
-
-        limpiar = 1'b0;
-        cargar_a = 1'b0;
-        cargar_b = 1'b0;
-        calcular = 1'b0;
-
+        limpiar           = 1'b0;
+        cargar_a          = 1'b0;
+        cargar_b          = 1'b0;
+        calcular          = 1'b0;
         seleccion_display = 2'd0;
 
-        case (estado_actual)
-
-            INGRESO_A: begin
-                seleccion_display = 2'd0;
-
-                if (key_valid) begin
-                    if (key_code == TECLA_D) begin
-                        limpiar = 1'b1;
-                        estado_siguiente = INGRESO_A;
-                    end else if (es_digito(key_code) && !a_lleno) begin
-                        cargar_a = 1'b1;
-                    end else if (key_code == TECLA_A) begin
-                        estado_siguiente = INGRESO_B;
-                    end
-                end
-            end
-
-            INGRESO_B: begin
-                seleccion_display = 2'd1;
-
-                if (key_valid) begin
-                    if (key_code == TECLA_D) begin
-                        limpiar = 1'b1;
-                        estado_siguiente = INGRESO_A;
-                    end else if (es_digito(key_code) && !b_lleno) begin
-                        cargar_b = 1'b1;
-                    end else if (key_code == TECLA_B || key_code == TECLA_C) begin
-                        calcular = 1'b1;
-                        estado_siguiente = MOSTRAR_RESULTADO;
-                    end
-                end
-            end
-
-            MOSTRAR_RESULTADO: begin
-                seleccion_display = 2'd2;
-
-                if (key_valid) begin
-                    if (key_code == TECLA_D) begin
-                        limpiar = 1'b1;
-                        estado_siguiente = INGRESO_A;
-                    end
-                end
-            end
-
-            default: begin
-                estado_siguiente = INGRESO_A;
-            end
-
+        case (estado)
+            INGRESO_A:         seleccion_display = 2'd0;
+            INGRESO_B:         seleccion_display = 2'd1;
+            MOSTRAR_RESULTADO: seleccion_display = 2'd2;
+            default:           seleccion_display = 2'd0;
         endcase
+
+        if (key_valid) begin
+            if (key_code == 4'hC || key_code == 4'hD) begin
+                limpiar = 1'b1;
+            end else begin
+                case (estado)
+                    INGRESO_A: begin
+                        if (es_digito && !a_lleno)
+                            cargar_a = 1'b1;
+                    end
+                    INGRESO_B: begin
+                        if (es_digito && !b_lleno)
+                            cargar_b = 1'b1;
+                        else if (key_code == 4'hF)
+                            calcular = 1'b1;
+                    end
+                    default: ;
+                endcase
+            end
+        end
     end
 
 endmodule
-
-/*
-Este módulo es la máquina de estados finitos (FSM) que controla todo el flujo del sistema. 
-Su trabajo es decidir cuándo se está ingresando el primer número (A), cuándo se pasa al 
-segundo número (B) y cuándo se debe mostrar el resultado final. También interpreta las 
-teclas especiales del teclado: una tecla permite cambiar de A a B, otra ejecuta la suma y 
-otra limpia todo el sistema para comenzar de nuevo. Además, controla qué valor se debe 
-mostrar en los displays según el estado actual del sistema.
-*/

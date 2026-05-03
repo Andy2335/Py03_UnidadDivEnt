@@ -1,160 +1,205 @@
 module top(
     input  logic       clk27,
     input  logic       rst_n,
-
     input  logic [3:0] keypad_rows,
-    output logic [3:0] keypad_cols,
 
+    output logic [3:0] keypad_cols,
     output logic [6:0] seg,
     output logic [3:0] dig
+    
 );
 
+    //--------------------------------------------------
+    // Reset interno seguro
+    //--------------------------------------------------
     logic rst;
-    assign rst = 1'b0;
 
+    reset_inicio #(
+        .CICLOS(5_000_000)
+    ) u_reset_inicio (
+        .clk(clk27),
+        .rst_n(rst_n),
+        .rst(rst)
+    );
+
+    //--------------------------------------------------
+    // Señales teclado
+    //--------------------------------------------------
     logic scan_tick;
     logic key_valid;
     logic [3:0] key_code;
 
-    logic [3:0] a0, a1, a2;
-    logic [3:0] b0, b1, b2;
-    logic [3:0] r0, r1, r2, r3;
+    //--------------------------------------------------
+    // Señales control
+    //--------------------------------------------------
+    logic limpiar;
+    logic cargar_a;
+    logic cargar_b;
+    logic calcular;
+    logic [1:0] seleccion_display;
 
-    logic [1:0] digitos_a;
-    logic [1:0] digitos_b;
+    //--------------------------------------------------
+    // Números
+    //--------------------------------------------------
+    logic [10:0] numero_a;
+    logic [10:0] numero_b;
+    logic [10:0] resultado;
+    logic [10:0] numero_display;
 
-    typedef enum logic [1:0] {
-        INGRESAR_A = 2'd0,
-        INGRESAR_B = 2'd1,
-        MOSTRAR_R  = 2'd2
-    } estado_t;
+    logic [1:0] cantidad_a;
+    logic [1:0] cantidad_b;
 
-    estado_t estado = INGRESAR_A;
+    logic a_lleno;
+    logic b_lleno;
+    logic overflow;
 
+    //--------------------------------------------------
+    // Dígitos BCD
+    //--------------------------------------------------
+    logic [3:0] d0;
+    logic [3:0] d1;
+    logic [3:0] d2;
+    logic [3:0] d3;
+
+    //--------------------------------------------------
+    // Generador de tick para teclado
+    //--------------------------------------------------
     generador_tick #(
-        .DIV(27000)
-    ) u_tick_teclado (
-        .clk  (clk27),
-        .rst  (rst),
-        .tick (scan_tick)
+        .DIV(54000)
+    ) u_tick (
+        .clk(clk27),
+        .rst(rst),
+        .tick(scan_tick)
     );
 
+    //--------------------------------------------------
+    // Teclado hexadecimal (barrido 3 fases, sin parche)
+    //--------------------------------------------------
     teclado_hex u_teclado (
-        .clk        (clk27),
-        .rst        (rst),
-        .scan_tick  (scan_tick),
-        .rows_async (keypad_rows),
-        .cols       (keypad_cols),
-        .key_valid  (key_valid),
-        .key_code   (key_code)
+        .clk(clk27),
+        .rst(rst),
+        .scan_tick(scan_tick),
+        .rows_async(keypad_rows),
+
+        .cols(keypad_cols),
+        .key_valid(key_valid),
+        .key_code(key_code)
     );
 
-    logic [4:0] suma0, suma1, suma2;
+    //--------------------------------------------------
+    // FSM de control
+    //--------------------------------------------------
+    control_entrada_fsm u_control (
+        .clk(clk27),
+        .rst(rst),
 
-    always_comb begin
-        suma0 = a0 + b0;
-        suma1 = a1 + b1 + (suma0 >= 10);
-        suma2 = a2 + b2 + (suma1 >= 10);
+        .key_valid(key_valid),
+        .key_code(key_code),
 
-        r0 = (suma0 >= 10) ? suma0 - 10 : suma0;
-        r1 = (suma1 >= 10) ? suma1 - 10 : suma1;
-        r2 = (suma2 >= 10) ? suma2 - 10 : suma2;
-        r3 = (suma2 >= 10) ? 4'd1 : 4'd0;
-    end
+        .a_lleno(a_lleno),
+        .b_lleno(b_lleno),
 
-    always_ff @(posedge clk27) begin
-        if (key_valid) begin
+        .limpiar(limpiar),
+        .cargar_a(cargar_a),
+        .cargar_b(cargar_b),
+        .calcular(calcular),
 
-            if (key_code == 4'hD || key_code == 4'hE) begin
-                estado <= INGRESAR_A;
+        .seleccion_display(seleccion_display)
+    );
 
-                a0 <= 0; a1 <= 0; a2 <= 0;
-                b0 <= 0; b1 <= 0; b2 <= 0;
+    //--------------------------------------------------
+    // Constructor número A
+    //--------------------------------------------------
+    constructor_numero #(
+        .WIDTH(11),
+        .MAX_DIGITOS(3)
+    ) u_numero_a (
+        .clk(clk27),
+        .rst(rst),
+        .limpiar(limpiar),
+        .cargar_digito(cargar_a),
+        .digito(key_code),
 
-                digitos_a <= 0;
-                digitos_b <= 0;
-            end else begin
-                case (estado)
+        .numero(numero_a),
+        .cantidad_digitos(cantidad_a),
+        .lleno(a_lleno)
+    );
 
-                    INGRESAR_A: begin
-                        if (key_code <= 9 && digitos_a < 3) begin
-                            a2 <= a1;
-                            a1 <= a0;
-                            a0 <= key_code;
-                            digitos_a <= digitos_a + 1'b1;
-                        end else if (key_code == 4'hA) begin
-                            estado <= INGRESAR_B;
-                        end
-                    end
+    //--------------------------------------------------
+    // Constructor número B
+    //--------------------------------------------------
+    constructor_numero #(
+        .WIDTH(11),
+        .MAX_DIGITOS(3)
+    ) u_numero_b (
+        .clk(clk27),
+        .rst(rst),
+        .limpiar(limpiar),
+        .cargar_digito(cargar_b),
+        .digito(key_code),
 
-                    INGRESAR_B: begin
-                        if (key_code <= 9 && digitos_b < 3) begin
-                            b2 <= b1;
-                            b1 <= b0;
-                            b0 <= key_code;
-                            digitos_b <= digitos_b + 1'b1;
-                        end else if (key_code == 4'hB || key_code == 4'hC || key_code == 4'hF) begin
-                            estado <= MOSTRAR_R;
-                        end
-                    end
+        .numero(numero_b),
+        .cantidad_digitos(cantidad_b),
+        .lleno(b_lleno)
+    );
 
-                    MOSTRAR_R: begin
-                    end
+    //--------------------------------------------------
+    // Suma
+    //--------------------------------------------------
+    suma_aritmetica_11bits u_suma (
+        .clk(clk27),
+        .rst(rst),
 
-                endcase
-            end
-        end
-    end
+        .dato_a(numero_a),
+        .dato_b(numero_b),
 
-    logic [3:0] d0, d1, d2, d3;
+        .resultado(resultado),
+        .overflow(overflow)
+    );
 
-    always_comb begin
-        case (estado)
-            INGRESAR_A: begin
-                d0 = a0;
-                d1 = a1;
-                d2 = a2;
-                d3 = 0;
-            end
+    //--------------------------------------------------
+    // Selector del número a mostrar
+    //--------------------------------------------------
+    selector_numero_display u_selector_display (
+        .seleccion_display(seleccion_display),
 
-            INGRESAR_B: begin
-                d0 = b0;
-                d1 = b1;
-                d2 = b2;
-                d3 = 0;
-            end
+        .numero_a(numero_a),
+        .numero_b(numero_b),
+        .resultado(resultado),
 
-            MOSTRAR_R: begin
-                d0 = r0;
-                d1 = r1;
-                d2 = r2;
-                d3 = r3;
-            end
+        .numero_display(numero_display)
+    );
 
-            default: begin
-                d0 = 0;
-                d1 = 0;
-                d2 = 0;
-                d3 = 0;
-            end
-        endcase
-    end
+    //--------------------------------------------------
+    // Conversor BCD
+    //--------------------------------------------------
+    binario_a_bcd_4dig u_bcd (
+        .bin(numero_display),
 
+        .d0(d0),
+        .d1(d1),
+        .d2(d2),
+        .d3(d3)
+    );
+
+    //--------------------------------------------------
+    // Display 4 dígitos
+    //--------------------------------------------------
     display_4dig_mux #(
         .CLK_FREQ(27000000),
         .REFRESH_HZ(1000),
         .COMMON_ANODE(0)
     ) u_display (
-        .clk (clk27),
-        .rst (1'b0),
+        .clk(clk27),
+        .rst(rst),
 
-        .d0  (d0),
-        .d1  (d1),
-        .d2  (d2),
-        .d3  (d3),
+        .d0(d0),
+        .d1(d1),
+        .d2(d2),
+        .d3(d3),
 
-        .seg (seg),
-        .dig (dig)
+        .seg(seg),
+        .dig(dig)
     );
 
 endmodule
