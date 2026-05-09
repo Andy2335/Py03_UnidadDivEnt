@@ -42,7 +42,7 @@ Implementar un sistema digital sincrónico que reciba dos cadenas de 8 bits medi
 
 # Descripción general del sistema
 
-En este proyecto se abordará el diseño e implementación de un sistema digital sincrónico que mediante un teclado matricial se ingresarán dos números enteros de 3 cifras decimales (8 bits por número), los cuales serán sumados utilizando un sumador de 16 bits. El resultado de la suma se mostrará en un display de 4x7 segmentos, permitiendo visualizar el resultado de la operación, este limita el desbordamiento debido a la candidad de bits utilizado. El sistema se implementará utilizando el lenguaje de descripción de hardware Verilog y se probará en una FPGA Nano Tang 9k.
+En este proyecto se abordará el diseño e implementación de un sistema digital sincrónico que mediante un teclado matricial se ingresarán dos números enteros de 3 cifras decimales (11 bits por número) con una representación máxima de 999 por número para evitar overflow, los cuales serán sumados utilizando un sumador aritmético. El resultado de la suma se mostrará en un display de 4x7 segmentos, permitiendo visualizar el resultado de la operación, este limita el desbordamiento debido a la candidad de bits utilizado. El sistema se implementará utilizando el lenguaje de descripción de hardware Verilog y se probará en una FPGA Nano Tang 9k.
 
 <img src="https://github.com/Andy2335/Py02DispSec/blob/3f3f60fa3e27a0b1f55e09d4d0992d0f4d454024/doc/Imagenes/Montaje%20Sistema%20Animado.png" width="700">
 
@@ -103,8 +103,8 @@ Montaje paso a paso del proyecto visita:
 
 El diagrama muestra la estructura funcional del módulo principal del sistema emisor. El dato de entrada de 4 bits es procesado por el codificador, el cual genera una palabra codificada de 7 bits, luego, esta señal es enviada al módulo de inserción de error, donde se puede alterar un bit según el valor de BitError, dando los bits finales del transmisor para que estos pasen al receptor. El dato original también es enviado al decodificador de 7 segmentos para su visualización en el display.
 
-  <a href="https://raw.githubusercontent.com/Andy2335/Py01_DisLog_EmisorReceptorHamming/main/doc/imagenes/Diagrama.png">
-  <img src="https://raw.githubusercontent.com/Andy2335/Py01_DisLog_EmisorReceptorHamming/main/doc/imagenes/Diagrama.png" width="700">
+  <a href="">
+  <img src="" width="700">
 </a>
 
 ## Resultados
