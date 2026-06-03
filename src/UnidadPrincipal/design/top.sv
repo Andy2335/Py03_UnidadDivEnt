@@ -144,17 +144,18 @@ module top(
     );
 
     //--------------------------------------------------
-    // Suma
+    // División entera
     //--------------------------------------------------
-    suma_aritmetica_11bits u_suma (
+    subsistema_division u_div (
+
         .clk(clk27),
         .rst(rst),
-
-        .dato_a(numero_a),
-        .dato_b(numero_b),
-
-        .resultado(resultado),
-        .overflow(overflow)
+        .A(numero_a),
+        .B(numero_b),
+        .valid(valid),
+        .cociente(cociente),
+        .residuo(residuo)
+        .done(done)
     );
 
     //--------------------------------------------------
