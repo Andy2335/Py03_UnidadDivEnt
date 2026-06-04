@@ -1,6 +1,6 @@
 /*
     Instituto Tecnológico de Costa Rica
-    Curso: Diseño Lógico 
+    Curso: Diseño Lógico.
 
     Proyecto 03 - Unidad de división entera con teclado y display
     Integrantes:
@@ -28,7 +28,7 @@ module top(
     input  logic [3:0] keypad_rows, // Filas del teclado (entradas)
     output logic [3:0] keypad_cols, // Columnas del teclado (salidas)
     output logic [6:0] seg, // Segmentos del display
-    output logic [3:0] dig // Dígitos del display - Multiplexacion  
+    output logic [3:0] dig // Dígitos del display - Multiplexacion.
 );
 
     //--------------------------------------------------
@@ -229,7 +229,7 @@ module top(
     // Adaptación para BCD
     //--------------------------------------------------
     assign numero_display_bcd = display_error ? 11'd0 : {5'd0, numero_display};
-    
+
     //--------------------------------------------------
     // Conversor BCD
     //--------------------------------------------------
