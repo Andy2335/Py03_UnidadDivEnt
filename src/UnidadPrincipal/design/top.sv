@@ -9,7 +9,7 @@
     - [Mariana Guerrero Morales] - [Carné 3]
 
 
-    Módulo top que integra todos los componentes del sistema:
+    Módulo top que integra los componentes del sistema:
     - Generación de reset interno seguro
     - Generación de tick para escaneo del teclado
     - Control y lectura del teclado hexadecimal
