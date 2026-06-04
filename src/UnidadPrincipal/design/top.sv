@@ -189,7 +189,8 @@ module top(
 
         .numero_a(numero_a),
         .numero_b(numero_b),
-        .resultado(resultado),
+        .cociente(cociente),
+        .residuo(residuo),
 
         .numero_display(numero_display)
     );
