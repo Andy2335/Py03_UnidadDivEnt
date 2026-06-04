@@ -23,12 +23,12 @@
 */
 
 module top(
-    input  logic       clk27, // Reloj de 27 MHz propio de la FPGA
-    input  logic       rst_n, // Reset asíncrono activo bajo externo (botón)
-    input  logic [3:0] keypad_rows, // Filas del teclado (entradas)
-    output logic [3:0] keypad_cols, // Columnas del teclado (salidas)
-    output logic [6:0] seg, // Segmentos del display
-    output logic [3:0] dig // Dígitos del display - Multiplexacion.
+    input  logic       clk27,
+    input  logic       rst_n,
+    input  logic [3:0] keypad_rows,
+    output logic [3:0] keypad_cols,
+    output logic [6:0] seg,
+    output logic [3:0] dig
 );
 
     //--------------------------------------------------
@@ -39,9 +39,9 @@ module top(
     reset_inicio #(
         .CICLOS(5_000_000)
     ) u_reset_inicio (
-        .clk(clk27),
-        .rst_n(rst_n),
-        .rst(rst)
+        .clk   (clk27),
+        .rst_n (rst_n),
+        .rst   (rst)
     );
 
     //--------------------------------------------------
@@ -71,13 +71,13 @@ module top(
     //--------------------------------------------------
     // Números
     //--------------------------------------------------
-    logic [5:0] numero_a;        // Dividendo: máximo 63
-    logic [3:0] numero_b;        // Divisor: máximo 15
+    logic [5:0] numero_a;
+    logic [3:0] numero_b;
 
     logic [5:0] cociente;
     logic [3:0] residuo;
 
-    logic [5:0] numero_display;
+    logic [5:0]  numero_display;
     logic [10:0] numero_display_bcd;
 
     logic [1:0] cantidad_a;
@@ -105,124 +105,127 @@ module top(
     generador_tick #(
         .DIV(54000)
     ) u_tick (
-        .clk(clk27),
-        .rst(rst),
-        .tick(scan_tick)
+        .clk  (clk27),
+        .rst  (rst),
+        .tick (scan_tick)
     );
 
     //--------------------------------------------------
-    // Teclado hexadecimal (barrido 3 fases, sin parche)
+    // Teclado hexadecimal
     //--------------------------------------------------
     teclado_hex u_teclado (
-        .clk(clk27),
-        .rst(rst),
-        .scan_tick(scan_tick),
-        .rows_async(keypad_rows),
+        .clk        (clk27),
+        .rst        (rst),
+        .scan_tick  (scan_tick),
+        .rows_async (keypad_rows),
 
-        .cols(keypad_cols),
-        .key_valid(key_valid),
-        .key_code(key_code)
+        .cols       (keypad_cols),
+        .key_valid  (key_valid),
+        .key_code   (key_code)
     );
 
     //--------------------------------------------------
     // FSM de control
     //--------------------------------------------------
     control_entrada_fsm u_control (
-    .clk(clk27),
-    .rst(rst),
+        .clk   (clk27),
+        .rst   (rst),
 
-    .key_valid(key_valid),
-    .key_code(key_code),
+        .key_valid (key_valid),
+        .key_code  (key_code),
 
-    .a_lleno(a_lleno),
-    .b_lleno(b_lleno),
-    .b_es_cero(b_es_cero),
+        .a_lleno   (a_lleno),
+        .b_lleno   (b_lleno),
+        .b_es_cero (b_es_cero),
 
-    .done(done_division),
+        .done      (done_division),
 
-    .limpiar(limpiar),
-    .cargar_a(cargar_a),
-    .cargar_b(cargar_b),
-    .borrar_a(borrar_a),
-    .borrar_b(borrar_b),
-    .valid(valid_division),
+        .limpiar   (limpiar),
+        .cargar_a  (cargar_a),
+        .cargar_b  (cargar_b),
+        .borrar_a  (borrar_a),
+        .borrar_b  (borrar_b),
+        .valid     (valid_division),
 
-    .error(error_division),
-    .sel_resultado(sel_resultado),
-    .seleccion_display(seleccion_display)
-);
-
-    //--------------------------------------------------
-    // Constructor número A // Dividendo Máximo 63 (6 bits)
-    //--------------------------------------------------
-    constructor_numero #(
-    .WIDTH(6),
-    .MAX_DIGITOS(2),
-    .MAX_VAL(63)
-) u_numero_a (
-    .clk(clk27),
-    .rst(rst),
-
-    .limpiar(limpiar),
-    .cargar_digito(cargar_a),
-    .borrar(borrar_a),
-    .digito(key_code),
-
-    .numero(numero_a),
-    .cantidad_digitos(cantidad_a),
-    .lleno(a_lleno),
-    .es_cero(a_es_cero)
-);
+        .error             (error_division),
+        .sel_resultado     (sel_resultado),
+        .seleccion_display (seleccion_display)
+    );
 
     //--------------------------------------------------
-    // Constructor número B // Divisor Máximo 15 (4 bits)
+    // Constructor número A // Dividendo Máximo 63
     //--------------------------------------------------
     constructor_numero #(
-    .WIDTH(4),
-    .MAX_DIGITOS(2),
-    .MAX_VAL(15)
-) u_numero_b (
-    .clk(clk27),
-    .rst(rst),
+        .WIDTH       (6),
+        .MAX_DIGITOS (2),
+        .MAX_VAL     (63)
+    ) u_numero_a (
+        .clk           (clk27),
+        .rst           (rst),
 
-    .limpiar(limpiar),
-    .cargar_digito(cargar_b),
-    .borrar(borrar_b),
-    .digito(key_code),
+        .limpiar       (limpiar),
+        .cargar_digito (cargar_a),
+        .borrar        (borrar_a),
+        .digito        (key_code),
 
-    .numero(numero_b),
-    .cantidad_digitos(cantidad_b),
-    .lleno(b_lleno),
-    .es_cero(b_es_cero)
-);
+        .numero           (numero_a),
+        .cantidad_digitos (cantidad_a),
+        .lleno            (a_lleno),
+        .es_cero          (a_es_cero)
+    );
 
+    //--------------------------------------------------
+    // Constructor número B // Divisor Máximo 15
+    //--------------------------------------------------
+    constructor_numero #(
+        .WIDTH       (4),
+        .MAX_DIGITOS (2),
+        .MAX_VAL     (15)
+    ) u_numero_b (
+        .clk           (clk27),
+        .rst           (rst),
+
+        .limpiar       (limpiar),
+        .cargar_digito (cargar_b),
+        .borrar        (borrar_b),
+        .digito        (key_code),
+
+        .numero           (numero_b),
+        .cantidad_digitos (cantidad_b),
+        .lleno            (b_lleno),
+        .es_cero          (b_es_cero)
+    );
 
     //--------------------------------------------------
     // División entera
     //--------------------------------------------------
     subsistema_division u_div (
+        .clk      (clk27),
+        .rst      (rst),
 
-        .clk(clk27),
-        .rst(rst),
-        .A(numero_a),
-        .B(numero_b),
-        .valid(valid),
-        .cociente(cociente),
-        .residuo(residuo),
-        .done(done)
+        .A        (numero_a),
+        .B        (numero_b),
+        .valid    (valid_division),
+
+        .cociente (cociente),
+        .residuo  (residuo),
+        .done     (done_division)
     );
 
     //--------------------------------------------------
     // Selector del número a mostrar
     //--------------------------------------------------
     selector_numero_display u_selector_display (
-        .seleccion_display(seleccion_display),
+        .seleccion_display (seleccion_display),
+        .sel_resultado     (sel_resultado),
 
-        .numero_a(numero_a),
-        .numero_b(numero_b),
-        .resultado(resultado),
+        .numero_a          (numero_a),
+        .numero_b          (numero_b),
+        .cociente          (cociente),
+        .residuo           (residuo),
 
-        .numero_display(numero_display)
+        .numero_display    (numero_display),
+        .display_error     (display_error)
     );
 
     //--------------------------------------------------
@@ -234,32 +237,32 @@ module top(
     // Conversor BCD
     //--------------------------------------------------
     binario_a_bcd_4dig u_bcd (
-        .bin(numero_display),
+        .bin (numero_display_bcd),
 
-        .d0(d0),
-        .d1(d1),
-        .d2(d2),
-        .d3(d3)
+        .d0  (d0),
+        .d1  (d1),
+        .d2  (d2),
+        .d3  (d3)
     );
 
     //--------------------------------------------------
     // Display 4 dígitos
     //--------------------------------------------------
     display_4dig_mux #(
-        .CLK_FREQ(27000000),
-        .REFRESH_HZ(1000),
-        .COMMON_ANODE(0)
+        .CLK_FREQ     (27000000),
+        .REFRESH_HZ   (1000),
+        .COMMON_ANODE (0)
     ) u_display (
-        .clk(clk27),
-        .rst(rst),
+        .clk (clk27),
+        .rst (rst),
 
-        .d0(d0),
-        .d1(d1),
-        .d2(d2),
-        .d3(d3),
+        .d0  (d0),
+        .d1  (d1),
+        .d2  (d2),
+        .d3  (d3),
 
-        .seg(seg),
-        .dig(dig)
+        .seg (seg),
+        .dig (dig)
     );
 
 endmodule
