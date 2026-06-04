@@ -4,9 +4,9 @@
 
     Proyecto 03 - Unidad de división entera con teclado y display
     Integrantes:
-    - [Nombre 1] - [Carné 1]
-    - [Nombre 2] - [Carné 2]
-    - [Nombre 3] - [Carné 3]
+    - [Mariana Solano Gutiérrez] - [2023090199]
+    - [Andrés Obregól López] - [2022072248]
+    - [Mariana Guerrero Morales] - [Carné 3]
 
 
     Módulo top que integra todos los componentes del sistema:
