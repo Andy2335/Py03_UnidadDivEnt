@@ -10,7 +10,7 @@ DESIGN = ../design
 SOURCES = \
 	$(wildcard $(MODULOS)/Teclado/*.sv) \
 	$(wildcard $(MODULOS)/Control/*.sv) \
-	$(wildcard $(MODULOS)/Calculo_Suma/*.sv) \
+	$(wildcard $(MODULOS)/Calculo_DivEnt/*.sv) \
 	$(wildcard $(MODULOS)/Display_7Seg/*.sv) \
 	$(DESIGN)/top.sv
 

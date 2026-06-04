@@ -64,6 +64,7 @@ module top(
     logic done_division;
 
     logic error_division;
+    logic error_div0_subsistema;
     logic sel_resultado;
 
     logic [1:0] seleccion_display;
@@ -207,31 +208,34 @@ module top(
         .B        (numero_b),
         .valid    (valid_division),
 
-        .cociente (cociente),
-        .residuo  (residuo),
-        .done     (done_division)
+        .cociente   (cociente),
+        .residuo    (residuo),
+        .done       (done_division),
+        .error_div0 (error_div0_subsistema)
     );
 
     //--------------------------------------------------
     // Selector del número a mostrar
     //--------------------------------------------------
     selector_numero_display u_selector_display (
-        .seleccion_display (seleccion_display),
-        .sel_resultado     (sel_resultado),
+    .seleccion_display (seleccion_display),
+    .sel_resultado     (sel_resultado),
 
-        .numero_a          (numero_a),
-        .numero_b          (numero_b),
-        .cociente          (cociente),
-        .residuo           (residuo),
+    .numero_a          (numero_a),
+    .numero_b          (numero_b),
+    .cociente          (cociente),
+    .residuo           (residuo),
 
-        .numero_display    (numero_display),
-        .display_error     (display_error)
-    );
+    .numero_display    (numero_display),
+    .display_error     (display_error)
+);
 
     //--------------------------------------------------
     // Adaptación para BCD
     //--------------------------------------------------
-    assign numero_display_bcd = display_error ? 11'd0 : {5'd0, numero_display};
+    assign numero_display_bcd = (display_error || error_division || error_div0_subsistema)
+                           ? 11'd0
+                           : {5'd0, numero_display};
 
     //--------------------------------------------------
     // Conversor BCD
