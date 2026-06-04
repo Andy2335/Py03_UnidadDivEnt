@@ -241,13 +241,16 @@ module top(
     // Conversor BCD
     //--------------------------------------------------
     binario_a_bcd_4dig u_bcd (
-        .bin (numero_display_bcd),
+    .clk (clk27),
+    .rst (rst),
 
-        .d0  (d0),
-        .d1  (d1),
-        .d2  (d2),
-        .d3  (d3)
-    );
+    .bin (numero_display_bcd),
+
+    .d0  (d0),
+    .d1  (d1),
+    .d2  (d2),
+    .d3  (d3)
+);
 
     //--------------------------------------------------
     // Display 4 dígitos
