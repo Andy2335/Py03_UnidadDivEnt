@@ -57,23 +57,39 @@ module top(
     logic limpiar;
     logic cargar_a;
     logic cargar_b;
-    logic calcular;
+    logic borrar_a;
+    logic borrar_b;
+
+    logic valid_division;
+    logic done_division;
+
+    logic error_division;
+    logic sel_resultado;
+
     logic [1:0] seleccion_display;
 
     //--------------------------------------------------
     // Números
     //--------------------------------------------------
-    logic [10:0] numero_a;
-    logic [10:0] numero_b;
-    logic [10:0] resultado;
-    logic [10:0] numero_display;
+    logic [5:0] numero_a;        // Dividendo: máximo 63
+    logic [3:0] numero_b;        // Divisor: máximo 15
+
+    logic [5:0] cociente;
+    logic [3:0] residuo;
+
+    logic [5:0] numero_display;
+    logic [10:0] numero_display_bcd;
 
     logic [1:0] cantidad_a;
     logic [1:0] cantidad_b;
 
     logic a_lleno;
     logic b_lleno;
-    logic overflow;
+
+    logic a_es_cero;
+    logic b_es_cero;
+
+    logic display_error;
 
     //--------------------------------------------------
     // Dígitos BCD
@@ -112,58 +128,73 @@ module top(
     // FSM de control
     //--------------------------------------------------
     control_entrada_fsm u_control (
-        .clk(clk27),
-        .rst(rst),
+    .clk(clk27),
+    .rst(rst),
 
-        .key_valid(key_valid),
-        .key_code(key_code),
+    .key_valid(key_valid),
+    .key_code(key_code),
 
-        .a_lleno(a_lleno),
-        .b_lleno(b_lleno),
+    .a_lleno(a_lleno),
+    .b_lleno(b_lleno),
+    .b_es_cero(b_es_cero),
 
-        .limpiar(limpiar),
-        .cargar_a(cargar_a),
-        .cargar_b(cargar_b),
-        .calcular(calcular),
+    .done(done_division),
 
-        .seleccion_display(seleccion_display)
-    );
+    .limpiar(limpiar),
+    .cargar_a(cargar_a),
+    .cargar_b(cargar_b),
+    .borrar_a(borrar_a),
+    .borrar_b(borrar_b),
+    .valid(valid_division),
+
+    .error(error_division),
+    .sel_resultado(sel_resultado),
+    .seleccion_display(seleccion_display)
+);
 
     //--------------------------------------------------
     // Constructor número A // Dividendo Máximo 63 (6 bits)
     //--------------------------------------------------
     constructor_numero #(
-        .WIDTH(6),
-        .MAX_DIGITOS(2)
-    ) u_numero_a (
-        .clk(clk27),
-        .rst(rst),
-        .limpiar(limpiar),
-        .cargar_digito(cargar_a),
-        .digito(key_code),
+    .WIDTH(6),
+    .MAX_DIGITOS(2),
+    .MAX_VAL(63)
+) u_numero_a (
+    .clk(clk27),
+    .rst(rst),
 
-        .numero(numero_a),
-        .cantidad_digitos(cantidad_a),
-        .lleno(a_lleno)
-    );
+    .limpiar(limpiar),
+    .cargar_digito(cargar_a),
+    .borrar(borrar_a),
+    .digito(key_code),
+
+    .numero(numero_a),
+    .cantidad_digitos(cantidad_a),
+    .lleno(a_lleno),
+    .es_cero(a_es_cero)
+);
 
     //--------------------------------------------------
     // Constructor número B // Divisor Máximo 15 (4 bits)
     //--------------------------------------------------
     constructor_numero #(
-        .WIDTH(4),
-        .MAX_DIGITOS(2)
-    ) u_numero_b (
-        .clk(clk27),
-        .rst(rst),
-        .limpiar(limpiar),
-        .cargar_digito(cargar_b),
-        .digito(key_code),
+    .WIDTH(4),
+    .MAX_DIGITOS(2),
+    .MAX_VAL(15)
+) u_numero_b (
+    .clk(clk27),
+    .rst(rst),
 
-        .numero(numero_b),
-        .cantidad_digitos(cantidad_b),
-        .lleno(b_lleno)
-    );
+    .limpiar(limpiar),
+    .cargar_digito(cargar_b),
+    .borrar(borrar_b),
+    .digito(key_code),
+
+    .numero(numero_b),
+    .cantidad_digitos(cantidad_b),
+    .lleno(b_lleno),
+    .es_cero(b_es_cero)
+);
 
 
     //--------------------------------------------------
@@ -189,8 +220,7 @@ module top(
 
         .numero_a(numero_a),
         .numero_b(numero_b),
-        .cociente(cociente),
-        .residuo(residuo),
+        .resultado(resultado),
 
         .numero_display(numero_display)
     );
