@@ -59,8 +59,13 @@ Montaje paso a paso del proyecto visita:
 - `design`, Implementación lógica programada y funciones.
 - `sim`, Testbenches y archivos de simulación.
 
+## Diagrama de Bloques - Unidad División de Enteros:
+<a href="">
+  <img src="" width="700">
+</a>
+
 ## Jerarquía del sistema
-- 4.1 Lector Teclado Hexadecimal - Diagrama de bloques y circuito lógico
+- Subsistema de lectura de datos
 
     ### Diagrama de bloques:
     <img src="" width="700">
@@ -71,7 +76,7 @@ Montaje paso a paso del proyecto visita:
     ### Visualización de Señales:
     <img src="" width="700">
 
-- 4.2 Sumador - Diagrama de bloques y circuito lógico
+-  Subsistema de cálculo de división de enteros
 
     ### Diagrama de bloques:
     <img src="" width="700">
@@ -82,7 +87,7 @@ Montaje paso a paso del proyecto visita:
     ### Visualización de Señales:
     <img src="" width="700">
 
-- 4.3 Visualización DecoDisplay7SEG - Diagrama de bloques y circuito lógico
+- Subsistema de conversión de binario a representación BCD
 
     ### Diagrama de bloques:
     <img src="" width="700">
@@ -93,36 +98,30 @@ Montaje paso a paso del proyecto visita:
     ### Visualización de Señales:
     <img src="" width="700">
 
+- Subsistema de despliegue en display de 7 segmentos
+
+    ### Diagrama de bloques:
+    <img src="" width="700">
+
+    ### Circuito lógico:
+    <img src="" width="700">
+
+    ### Visualización de Señales:
+    <img src="" width="700">    
 
 - Testbench y Simulación de Ondas
   [wiki]()
 
-    El testbench se utilizó para verificar automáticamente el funcionamiento 
-
-## Diagrama de Bloques:
-
-El diagrama muestra la estructura funcional del módulo principal del sistema emisor. El dato de entrada de 4 bits es procesado por el codificador, el cual genera una palabra codificada de 7 bits, luego, esta señal es enviada al módulo de inserción de error, donde se puede alterar un bit según el valor de BitError, dando los bits finales del transmisor para que estos pasen al receptor. El dato original también es enviado al decodificador de 7 segmentos para su visualización en el display.
-
-  <a href="">
-  <img src="" width="700">
-</a>
+    El testbench se utilizó para verificar automáticamente el funcionamiento de cada módulo individualmente y del sistema completo. Se diseñaron casos de prueba específicos para cubrir diferentes escenarios, incluyendo casos límite y situaciones comunes. La simulación de ondas permitió observar el comportamiento temporal de las señales, asegurando que el sistema respondiera correctamente a las entradas y produjera las salidas esperadas.
 
 ## Resultados
-- Pendiente de desarrollo.
-
+- 
 
 
 ## Mejora en el sistema 
-Pendiente de desarrollo.
-[wiki]()
-
-
-
-
-## Laboratorio  
-Pendiente de desarrollo.
+- 
 [wiki]()
 
 
 ## Conclusion
-Pendiente de desarrollo.
+-
