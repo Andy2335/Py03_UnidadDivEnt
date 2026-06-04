@@ -5,7 +5,7 @@
     Proyecto 03 - Unidad de división entera con teclado y display
     Integrantes:
     - [Mariana Solano Gutiérrez] - [2023090199]
-    - [Andrés Obregól López] - [2022072248]
+    - [Andrés Obregón López] - [2022072248]
     - [Mariana Guerrero Morales] - [Carné 3]
 
 
