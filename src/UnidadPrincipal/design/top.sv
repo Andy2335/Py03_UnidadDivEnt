@@ -1,12 +1,34 @@
-module top(
-    input  logic       clk27,
-    input  logic       rst_n,
-    input  logic [3:0] keypad_rows,
+/*
+    Instituto Tecnológico de Costa Rica
+    Curso: Diseño Lógico 
 
-    output logic [3:0] keypad_cols,
-    output logic [6:0] seg,
-    output logic [3:0] dig
-    
+    Proyecto 03 - Unidad de división entera con teclado y display
+    Integrantes:
+    - [Nombre 1] - [Carné 1]
+    - [Nombre 2] - [Carné 2]
+    - [Nombre 3] - [Carné 3]
+
+
+    Módulo top que integra todos los componentes del sistema:
+    - Generación de reset interno seguro
+    - Generación de tick para escaneo del teclado
+    - Control y lectura del teclado hexadecimal
+    - Logica de control para la entrada de datos y cálculo
+    - Constructor de números a partir de los dígitos ingresados
+    - Subsistema de división entera (Dividendo, divisor, cociente, residuo)
+    - Selector del número a mostrar en el display
+    - Conversor de binario a BCD para el display
+    - Control del display 4 dígitos multiplexado
+
+*/
+
+module top(
+    input  logic       clk27, // Reloj de 27 MHz propio de la FPGA
+    input  logic       rst_n, // Reset asíncrono activo bajo externo (botón)
+    input  logic [3:0] keypad_rows, // Filas del teclado (entradas)
+    output logic [3:0] keypad_cols, // Columnas del teclado (salidas)
+    output logic [6:0] seg, // Segmentos del display
+    output logic [3:0] dig // Dígitos del display - Multiplexacion  
 );
 
     //--------------------------------------------------
@@ -108,11 +130,11 @@ module top(
     );
 
     //--------------------------------------------------
-    // Constructor número A
+    // Constructor número A // Dividendo Máximo 63 (6 bits)
     //--------------------------------------------------
     constructor_numero #(
-        .WIDTH(11),
-        .MAX_DIGITOS(3)
+        .WIDTH(6),
+        .MAX_DIGITOS(2)
     ) u_numero_a (
         .clk(clk27),
         .rst(rst),
@@ -126,11 +148,11 @@ module top(
     );
 
     //--------------------------------------------------
-    // Constructor número B
+    // Constructor número B // Divisor Máximo 15 (4 bits)
     //--------------------------------------------------
     constructor_numero #(
-        .WIDTH(11),
-        .MAX_DIGITOS(3)
+        .WIDTH(4),
+        .MAX_DIGITOS(2)
     ) u_numero_b (
         .clk(clk27),
         .rst(rst),
@@ -143,6 +165,7 @@ module top(
         .lleno(b_lleno)
     );
 
+
     //--------------------------------------------------
     // División entera
     //--------------------------------------------------
@@ -154,7 +177,7 @@ module top(
         .B(numero_b),
         .valid(valid),
         .cociente(cociente),
-        .residuo(residuo)
+        .residuo(residuo),
         .done(done)
     );
 
