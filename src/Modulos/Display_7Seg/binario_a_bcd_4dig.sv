@@ -75,61 +75,69 @@ module binario_a_bcd_4dig(
             d3 <= 4'd0;
         end
         else begin
-            case (estado)
+            // Si bin cambia en cualquier estado fuera de IDLE, reiniciar
+            if (bin != bin_guardado && estado != IDLE) begin
+                estado   <= IDLE;
+                bcd_work <= 16'd0;
+                contador <= 4'd0;
+            end
+            else begin
+                case (estado)
 
-                //--------------------------------------------------
-                // Cargar número inicial
-                //--------------------------------------------------
-                IDLE: begin
-                    bin_guardado <= bin;
-                    bin_shift    <= bin;
-                    bcd_work     <= 16'd0;
-                    contador     <= 4'd0;
-                    estado       <= ADD3;
-                end
-
-                //--------------------------------------------------
-                // Sumar 3 a cada dígito BCD si hace falta
-                //--------------------------------------------------
-                ADD3: begin
-                    estado <= SHIFT;
-                end
-
-                //--------------------------------------------------
-                // Desplazar izquierda
-                //--------------------------------------------------
-                SHIFT: begin
-                    bcd_work  <= bcd_next;
-                    bin_shift <= bin_next;
-
-                    if (contador == 4'd10) begin
-                        d0 <= bcd_next[3:0];
-                        d1 <= bcd_next[7:4];
-                        d2 <= bcd_next[11:8];
-                        d3 <= bcd_next[15:12];
-
-                        estado <= DONE;
+                    //--------------------------------------------------
+                    // Cargar número inicial
+                    //--------------------------------------------------
+                    IDLE: begin
+                        bin_guardado <= bin;
+                        bin_shift    <= bin;
+                        bcd_work     <= 16'd0;
+                        contador     <= 4'd0;
+                        estado       <= ADD3;
                     end
-                    else begin
-                        contador <= contador + 4'd1;
-                        estado   <= ADD3;
-                    end
-                end
 
-                //--------------------------------------------------
-                // Esperar hasta que cambie el número
-                //--------------------------------------------------
-                DONE: begin
-                    if (bin != bin_guardado) begin
+                    //--------------------------------------------------
+                    // Sumar 3 a cada dígito BCD si hace falta
+                    //--------------------------------------------------
+                    ADD3: begin
+                        estado <= SHIFT;
+                    end
+
+                    //--------------------------------------------------
+                    // Desplazar izquierda
+                    //--------------------------------------------------
+                    SHIFT: begin
+                        bcd_work  <= bcd_next;
+                        bin_shift <= bin_next;
+
+                        if (contador == 4'd10) begin
+                            d0 <= bcd_next[3:0];
+                            d1 <= bcd_next[7:4];
+                            d2 <= bcd_next[11:8];
+                            d3 <= bcd_next[15:12];
+
+                            estado <= DONE;
+                        end
+                        else begin
+                            contador <= contador + 4'd1;
+                            estado   <= ADD3;
+                        end
+                    end
+
+                    //--------------------------------------------------
+                    // Esperar hasta que cambie el número
+                    //--------------------------------------------------
+                    DONE: begin
+                        if (bin != bin_guardado) begin
+                            estado <= IDLE;
+                        end
+                    end
+
+                    default: begin
                         estado <= IDLE;
                     end
-                end
 
-                default: begin
-                    estado <= IDLE;
-                end
-
-            endcase
+                endcase
+            end
         end
     end
 

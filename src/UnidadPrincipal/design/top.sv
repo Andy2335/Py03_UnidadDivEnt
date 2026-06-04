@@ -244,7 +244,7 @@ module top(
     .clk (clk27),
     .rst (rst),
 
-    .bin (numero_display_bcd),
+    .bin (11'd44),
 
     .d0  (d0),
     .d1  (d1),
