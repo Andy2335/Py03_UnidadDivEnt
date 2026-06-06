@@ -170,7 +170,8 @@ module top(
     );
 
     logic [5:0] bin_bcd;
-    assign bin_bcd = (display_error || error_division || (cociente == 6'b111111))
+    assign bin_bcd = (display_error || error_division || 
+                     (b_es_cero && seleccion_display == 2'd2))
                    ? 6'd0
                    : numero_display;
 
