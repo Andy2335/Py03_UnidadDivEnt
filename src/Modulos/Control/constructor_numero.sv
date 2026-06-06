@@ -16,133 +16,90 @@ module constructor_numero #(
     output logic             es_cero
 );
 
-    //--------------------------------------------------
-    // Estados
-    //--------------------------------------------------
-    localparam ESPERA = 2'd0;
-    localparam CARGAR = 2'd1;
-    localparam BORRAR = 2'd2;
-
-    logic [1:0] estado;
-
-    //--------------------------------------------------
-    // Registros internos
-    //--------------------------------------------------
-    logic [3:0] digito_guardado;
-    logic [3:0] primer_digito;
-
     localparam int CALC_WIDTH = WIDTH + 4;
+
+    logic cargar_r;
+    logic borrar_r;
+    logic [3:0] digito_r;
+    logic [3:0] primer_digito;
 
     logic [CALC_WIDTH-1:0] numero_ext;
     logic [CALC_WIDTH-1:0] digito_ext;
+    logic [CALC_WIDTH-1:0] primer_ext;
     logic [CALC_WIDTH-1:0] candidato;
 
-    //--------------------------------------------------
-    // Salidas simples
-    //--------------------------------------------------
-    assign lleno   = (cantidad_digitos >= MAX_DIGITOS);
+    assign lleno   = (cantidad_digitos >= MAX_DIGITOS[1:0]);
     assign es_cero = (numero == '0);
 
-    //--------------------------------------------------
-    // Cálculo del próximo número SIN división
-    //--------------------------------------------------
+    // 0-7: digito_r[3]==0 / 8-9: explícito
+    logic es_digito_r;
+    assign es_digito_r = (digito_r[3] == 1'b0) ||
+                         (digito_r == 4'd8)     ||
+                         (digito_r == 4'd9);
+
     always_comb begin
         numero_ext = '0;
         numero_ext[WIDTH-1:0] = numero;
 
         digito_ext = '0;
-        digito_ext[3:0] = digito_guardado;
+        digito_ext[3:0] = digito_r;
+
+        primer_ext = '0;
+        primer_ext[3:0] = primer_digito;
 
         candidato = numero_ext;
 
-        if (cantidad_digitos == 2'd0) begin
+        if (cantidad_digitos == 2'd0)
             candidato = digito_ext;
-        end
-        else if (cantidad_digitos == 2'd1) begin
-            // numero * 10 + digito
-            // Se hace con shifts para no usar multiplicador pesado
+        else if (cantidad_digitos == 2'd1)
             candidato = (numero_ext << 3) + (numero_ext << 1) + digito_ext;
-        end
     end
 
-    //--------------------------------------------------
-    // Máquina de estados
-    //--------------------------------------------------
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
-            estado           <= ESPERA;
             numero           <= '0;
             cantidad_digitos <= 2'd0;
-            digito_guardado  <= 4'd0;
             primer_digito    <= 4'd0;
+            cargar_r         <= 1'b0;
+            borrar_r         <= 1'b0;
+            digito_r         <= 4'd0;
         end
         else begin
+            cargar_r <= cargar_digito;
+            borrar_r <= borrar;
+            digito_r <= digito;
+
             if (limpiar) begin
-                estado           <= ESPERA;
                 numero           <= '0;
                 cantidad_digitos <= 2'd0;
-                digito_guardado  <= 4'd0;
                 primer_digito    <= 4'd0;
+                cargar_r         <= 1'b0;
+                borrar_r         <= 1'b0;
+                digito_r         <= 4'd0;
             end
-            else begin
-                case (estado)
+            else if (borrar_r && cantidad_digitos > 2'd0) begin
+                if (cantidad_digitos == 2'd2) begin
+                    numero           <= primer_ext[WIDTH-1:0];
+                    cantidad_digitos <= 2'd1;
+                end
+                else begin
+                    numero           <= '0;
+                    cantidad_digitos <= 2'd0;
+                    primer_digito    <= 4'd0;
+                end
+            end
+            else if (cargar_r && !lleno && es_digito_r) begin
+                if (candidato <= CALC_WIDTH'(MAX_VAL)) begin
+                    numero <= candidato[WIDTH-1:0];
 
-                    //--------------------------------------------------
-                    // Espera una orden de cargar o borrar
-                    //--------------------------------------------------
-                    ESPERA: begin
-                        if (cargar_digito && !lleno && digito <= 4'd9) begin
-                            digito_guardado <= digito;
-                            estado <= CARGAR;
-                        end
-                        else if (borrar && cantidad_digitos > 2'd0) begin
-                            estado <= BORRAR;
-                        end
+                    if (cantidad_digitos == 2'd0) begin
+                        cantidad_digitos <= 2'd1;
+                        primer_digito    <= digito_r;
                     end
-
-                    //--------------------------------------------------
-                    // Carga el dígito si no excede el máximo
-                    //--------------------------------------------------
-                    CARGAR: begin
-                        if (candidato <= CALC_WIDTH'(MAX_VAL)) begin
-
-                            if (cantidad_digitos == 2'd0) begin
-                                numero           <= candidato[WIDTH-1:0];
-                                cantidad_digitos <= 2'd1;
-                                primer_digito    <= digito_guardado;
-                            end
-                            else if (cantidad_digitos == 2'd1) begin
-                                numero           <= candidato[WIDTH-1:0];
-                                cantidad_digitos <= 2'd2;
-                            end
-
-                        end
-
-                        estado <= ESPERA;
+                    else if (cantidad_digitos == 2'd1) begin
+                        cantidad_digitos <= 2'd2;
                     end
-
-                    //--------------------------------------------------
-                    // Borra el último dígito SIN hacer numero / 10
-                    //--------------------------------------------------
-                    BORRAR: begin
-                        if (cantidad_digitos == 2'd2) begin
-                            numero           <= WIDTH'(primer_digito);
-                            cantidad_digitos <= 2'd1;
-                        end
-                        else if (cantidad_digitos == 2'd1) begin
-                            numero           <= '0;
-                            cantidad_digitos <= 2'd0;
-                            primer_digito    <= 4'd0;
-                        end
-
-                        estado <= ESPERA;
-                    end
-
-                    default: begin
-                        estado <= ESPERA;
-                    end
-
-                endcase
+                end
             end
         end
     end
