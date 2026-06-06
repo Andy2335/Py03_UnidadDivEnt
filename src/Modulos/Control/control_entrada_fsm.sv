@@ -7,85 +7,83 @@ module control_entrada_fsm (
 
     input  logic       a_lleno,
     input  logic       b_lleno,
-    input  logic       b_es_cero,     // divisor == 0 (del constructor_numero)
+    input  logic       b_es_cero,
 
-    // Senal del subsistema de division
-    input  logic       done,          // resultado estable
+    input  logic       done,
 
     output logic       limpiar,
     output logic       cargar_a,
     output logic       cargar_b,
     output logic       borrar_a,
     output logic       borrar_b,
-    output logic       valid,         // pulso: inicia la division
+    output logic       valid,
 
-    output logic       error,         // division entre cero
-    output logic       sel_resultado, // 0=cociente, 1=residuo
+    output logic       error,
+    output logic       sel_resultado,
     output logic [1:0] seleccion_display
 );
 
-    localparam [2:0] INGRESO_A  = 3'd0;
-    localparam [2:0] INGRESO_B  = 3'd1;
-    localparam [2:0] CALCULANDO = 3'd2;
-    localparam [2:0] RESULTADO  = 3'd3;
-    localparam [2:0] ERROR      = 3'd4;
+    localparam logic [2:0] INGRESO_A  = 3'd0;
+    localparam logic [2:0] INGRESO_B  = 3'd1;
+    localparam logic [2:0] CALCULANDO = 3'd2;
+    localparam logic [2:0] RESULTADO  = 3'd3;
+    localparam logic [2:0] ERROR      = 3'd4;
 
     logic [2:0] estado;
 
+    // 0-7: key_code[3]==0 / 8-9: explícito
     logic es_digito;
-    assign es_digito = (key_code <= 4'd9);
+    assign es_digito = (key_code[3] == 1'b0) ||
+                       (key_code == 4'd8)     ||
+                       (key_code == 4'd9);
 
-    // --------------------------------------------------
-    // Registro de sel_resultado
-    // Alterna con * (4'hE) o # (4'hF) estando en RESULTADO
-    // --------------------------------------------------
-    always_ff @(posedge clk) begin
-        if (rst)
+    always_ff @(posedge clk or posedge rst) begin
+        if (rst) begin
+            estado        <= INGRESO_A;
             sel_resultado <= 1'b0;
-        else if (key_valid && (key_code == 4'hC || key_code == 4'hD))
-            sel_resultado <= 1'b0;
-        else if (key_valid && (key_code == 4'hE || key_code == 4'hF)
-                 && estado == RESULTADO)
-            sel_resultado <= ~sel_resultado;
-    end
-
-    // --------------------------------------------------
-    // Registro de estado
-    // --------------------------------------------------
-    always_ff @(posedge clk) begin
-        if (rst) estado <= INGRESO_A;
+        end
         else begin
-            // C o D reinician desde cualquier estado
-            if (key_valid && (key_code == 4'hC || key_code == 4'hD))
-                estado <= INGRESO_A;
+            if (key_valid && (key_code == 4'hC || key_code == 4'hD)) begin
+                estado        <= INGRESO_A;
+                sel_resultado <= 1'b0;
+            end
             else begin
                 case (estado)
-                    INGRESO_A:  if (key_valid && key_code == 4'hA)
-                                    estado <= INGRESO_B;
+                    INGRESO_A: begin
+                        if (key_valid && key_code == 4'hA)
+                            estado <= INGRESO_B;
+                    end
 
-                    INGRESO_B:  if (key_valid && key_code == 4'hA) begin
-                                    if (b_es_cero)
-                                        estado <= ERROR;      // division entre cero
-                                    else
-                                        estado <= CALCULANDO; // todo ok
-                                end
+                    INGRESO_B: begin
+                        if (key_valid && key_code == 4'hA) begin
+                            sel_resultado <= 1'b0;
+                            if (b_es_cero)
+                                estado <= ERROR;
+                            else
+                                estado <= CALCULANDO;
+                        end
+                    end
 
-                    CALCULANDO: if (done)
-                                    estado <= RESULTADO;
+                    CALCULANDO: begin
+                        if (done)
+                            estado <= RESULTADO;
+                    end
 
-                    RESULTADO:  ;  // solo sale con C/D
+                    RESULTADO: begin
+                        if (key_valid && (key_code == 4'hE || key_code == 4'hF))
+                            sel_resultado <= ~sel_resultado;
+                    end
 
-                    ERROR:      ;  // solo sale con C/D
+                    ERROR: begin
+                        // Sale solo con C o D
+                    end
 
-                    default:    ;
+                    default: estado <= INGRESO_A;
                 endcase
             end
         end
     end
 
-    // --------------------------------------------------
-    // Salidas combinacionales puras
-    // --------------------------------------------------
     always_comb begin
         limpiar           = 1'b0;
         cargar_a          = 1'b0;
@@ -101,14 +99,18 @@ module control_entrada_fsm (
             INGRESO_B:  seleccion_display = 2'd1;
             CALCULANDO: seleccion_display = 2'd2;
             RESULTADO:  seleccion_display = 2'd2;
-            ERROR:      seleccion_display = 2'd3;  // display mostrara "Err"
+            ERROR:      seleccion_display = 2'd3;
             default:    seleccion_display = 2'd0;
         endcase
+
+        if (estado == ERROR)
+            error = 1'b1;
 
         if (key_valid) begin
             if (key_code == 4'hC || key_code == 4'hD) begin
                 limpiar = 1'b1;
-            end else begin
+            end
+            else begin
                 case (estado)
                     INGRESO_A: begin
                         if (es_digito && !a_lleno)
@@ -116,25 +118,20 @@ module control_entrada_fsm (
                         else if (key_code == 4'hB)
                             borrar_a = 1'b1;
                     end
+
                     INGRESO_B: begin
                         if (es_digito && !b_lleno)
                             cargar_b = 1'b1;
                         else if (key_code == 4'hB)
                             borrar_b = 1'b1;
                         else if (key_code == 4'hA && !b_es_cero)
-                            valid    = 1'b1;  // dispara la division solo si b != 0
+                            valid = 1'b1;
                     end
-                    ERROR: begin
-                        error = 1'b1;         // nivel activo mientras se este en ERROR
-                    end
+
                     default: ;
                 endcase
             end
         end
-
-        // error activo como nivel en estado ERROR (independiente de tecla)
-        if (estado == ERROR)
-            error = 1'b1;
     end
 
 endmodule

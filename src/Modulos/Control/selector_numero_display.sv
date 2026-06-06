@@ -1,14 +1,14 @@
 module selector_numero_display (
     input  logic [1:0] seleccion_display,
-    input  logic       sel_resultado,    // 0=cociente, 1=residuo
+    input  logic       sel_resultado,
 
-    input  logic [5:0] numero_a,         // dividendo (max 63)
-    input  logic [3:0] numero_b,         // divisor   (max 15)
-    input  logic [5:0] cociente,         // resultado: cociente (max 63)
-    input  logic [3:0] residuo,          // resultado: residuo  (max 15)
+    input  logic [5:0] numero_a,
+    input  logic [3:0] numero_b,
+    input  logic [5:0] cociente,
+    input  logic [3:0] residuo,
 
-    output logic [5:0] numero_display,   // valor numerico hacia el BCD
-    output logic       display_error     // 1 = mostrar "Err" en display
+    output logic [5:0] numero_display,
+    output logic       display_error
 );
 
     always_comb begin
@@ -16,11 +16,32 @@ module selector_numero_display (
         display_error  = 1'b0;
 
         case (seleccion_display)
-            2'd0: numero_display = numero_a;
-            2'd1: numero_display = {2'b00, numero_b};
-            2'd2: numero_display = sel_resultado ? {2'b00, residuo} : cociente;
-            2'd3: display_error  = 1'b1;   // senal al display para mostrar "Err"
-            default: ;
+
+            2'd0: begin
+                numero_display = numero_a;
+            end
+
+            2'd1: begin
+                numero_display = {2'b00, numero_b};
+            end
+
+            2'd2: begin
+                if (sel_resultado)
+                    numero_display = {2'b00, residuo};
+                else
+                    numero_display = cociente;
+            end
+
+            2'd3: begin
+                numero_display = 6'd0;
+                display_error  = 1'b1;
+            end
+
+            default: begin
+                numero_display = 6'd0;
+                display_error  = 1'b0;
+            end
+
         endcase
     end
 

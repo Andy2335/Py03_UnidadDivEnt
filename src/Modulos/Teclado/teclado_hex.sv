@@ -10,20 +10,29 @@ module teclado_hex(
 );
 
     //--------------------------------------------------
-    // Barrido de columnas (igual al código de prueba
-    // que detectó el 9 correctamente)
+    // Teclado matricial 4x4 activo en bajo
+    // cols: una columna en 0 a la vez
+    // rows_async: fila en 0 cuando hay tecla presionada
     //--------------------------------------------------
-    logic [1:0] col_idx;
-    logic       phase;
 
-    always_ff @(posedge clk) begin
+    logic [1:0] col_idx;
+    logic       phase;       // 0 = dejar columna estable, 1 = muestrear filas
+
+    wire sample_now;
+    assign sample_now = scan_tick && phase;
+
+    always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
             col_idx <= 2'd0;
             phase   <= 1'b0;
-        end else if (scan_tick) begin
-            if (phase == 1'b0) begin
+        end
+        else if (scan_tick) begin
+            if (!phase) begin
+                // Mantiene la columna activa un tick completo antes de leer filas
                 phase <= 1'b1;
-            end else begin
+            end
+            else begin
+                // Después de muestrear, pasa a la siguiente columna
                 phase <= 1'b0;
                 if (col_idx == 2'd3)
                     col_idx <= 2'd0;
@@ -44,16 +53,18 @@ module teclado_hex(
     end
 
     //--------------------------------------------------
-    // Sincronizar filas (igual al código de prueba)
+    // Sincronización de filas
     //--------------------------------------------------
+
     logic [3:0] rows_s1;
     logic [3:0] rows_s2;
 
-    always_ff @(posedge clk) begin
+    always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
             rows_s1 <= 4'b1111;
             rows_s2 <= 4'b1111;
-        end else begin
+        end
+        else begin
             rows_s1 <= rows_async;
             rows_s2 <= rows_s1;
         end
@@ -62,6 +73,7 @@ module teclado_hex(
     //--------------------------------------------------
     // Detectar fila activa
     //--------------------------------------------------
+
     logic       row_found;
     logic [1:0] row_idx;
 
@@ -76,8 +88,9 @@ module teclado_hex(
     end
 
     //--------------------------------------------------
-    // Decodificar tecla
+    // Mapa de teclado
     //--------------------------------------------------
+
     logic [3:0] cur_key;
 
     always_comb begin
@@ -107,36 +120,74 @@ module teclado_hex(
     end
 
     //--------------------------------------------------
-    // Emitir key_valid con bloqueo anti-repetición
+    // Escaneo completo + antirrebote
+    // No genera key_valid apenas ve una columna.
+    // Primero termina las 4 columnas y luego confirma que
+    // la misma tecla aparezca en dos escaneos completos seguidos.
     //--------------------------------------------------
-    logic locked;
-    logic any_key_this_scan;
 
-    always_ff @(posedge clk) begin
+    logic       scan_has_key;
+    logic [3:0] scan_key;
+
+    logic       prev_scan_pressed;
+    logic [3:0] prev_scan_key;
+
+    logic       locked;
+
+    logic       candidate_pressed;
+    logic [3:0] candidate_key;
+
+    always_comb begin
+        candidate_pressed = scan_has_key || row_found;
+        candidate_key     = scan_has_key ? scan_key : cur_key;
+    end
+
+    always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
             key_valid         <= 1'b0;
             key_code          <= 4'h0;
+
+            scan_has_key      <= 1'b0;
+            scan_key          <= 4'h0;
+
+            prev_scan_pressed <= 1'b0;
+            prev_scan_key     <= 4'h0;
+
             locked            <= 1'b0;
-            any_key_this_scan <= 1'b0;
-        end else begin
+        end
+        else begin
             key_valid <= 1'b0;
 
-            if (scan_tick && phase) begin
-
-                if (row_found) begin
-                    any_key_this_scan <= 1'b1;
-
-                    if (!locked) begin
-                        key_code  <= cur_key;
-                        key_valid <= 1'b1;
-                        locked    <= 1'b1;
-                    end
+            if (sample_now) begin
+                // Guarda la primera tecla encontrada durante este escaneo completo
+                if (row_found && !scan_has_key) begin
+                    scan_has_key <= 1'b1;
+                    scan_key     <= cur_key;
                 end
 
+                // Al terminar columna 3, se terminó un escaneo completo
                 if (col_idx == 2'd3) begin
-                    if (!any_key_this_scan && !row_found)
-                        locked <= 1'b0;
-                    any_key_this_scan <= 1'b0;
+                    // Antirrebote: acepta solo si dos escaneos seguidos coinciden
+                    if ((candidate_pressed == prev_scan_pressed) &&
+                        (!candidate_pressed || (candidate_key == prev_scan_key))) begin
+
+                        if (candidate_pressed) begin
+                            if (!locked) begin
+                                key_code  <= candidate_key;
+                                key_valid <= 1'b1;
+                                locked    <= 1'b1;
+                            end
+                        end
+                        else begin
+                            locked <= 1'b0;
+                        end
+                    end
+
+                    prev_scan_pressed <= candidate_pressed;
+                    prev_scan_key     <= candidate_key;
+
+                    scan_has_key <= 1'b0;
+                    scan_key     <= 4'h0;
                 end
             end
         end
