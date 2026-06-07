@@ -53,13 +53,15 @@ module top(
     logic sel_resultado;
     logic [1:0] seleccion_display;
 
-    logic [5:0] numero_a;
-    logic [3:0] numero_b;
+    // ── Rangos ampliados ──────────────────────────────────────────
+    logic [6:0] numero_a;   // 0-127
+    logic [4:0] numero_b;   // 0-31
 
-    logic [5:0] cociente;
-    logic [3:0] residuo;
+    logic [6:0] cociente;   // máx 127
+    logic [4:0] residuo;    // máx 30
+    // ─────────────────────────────────────────────────────────────
 
-    logic [5:0] numero_display;
+    logic [6:0] numero_display;
     logic       display_error;
 
     logic [1:0] cantidad_a;
@@ -113,10 +115,11 @@ module top(
     assign borrar_a_directo = key_valid && (key_code == 4'hB) && (seleccion_display == 2'd0);
     assign borrar_b_directo = key_valid && (key_code == 4'hB) && (seleccion_display == 2'd1);
 
+    // A: hasta 127 → 3 dígitos decimales → MAX_DIGITOS=3, WIDTH=7
     constructor_numero #(
-        .WIDTH       (6),
-        .MAX_DIGITOS (2),
-        .MAX_VAL     (63)
+        .WIDTH       (7),
+        .MAX_DIGITOS (3),
+        .MAX_VAL     (127)
     ) u_numero_a (
         .clk           (clk27),
         .rst           (rst),
@@ -130,10 +133,11 @@ module top(
         .es_cero          (a_es_cero)
     );
 
+    // B: hasta 31 → 2 dígitos decimales → MAX_DIGITOS=2, WIDTH=5
     constructor_numero #(
-        .WIDTH       (4),
+        .WIDTH       (5),
         .MAX_DIGITOS (2),
-        .MAX_VAL     (15)
+        .MAX_VAL     (31)
     ) u_numero_b (
         .clk           (clk27),
         .rst           (rst),
@@ -169,10 +173,10 @@ module top(
         .display_error     (display_error)
     );
 
-    logic [5:0] bin_bcd;
-    assign bin_bcd = (display_error || error_division || 
+    logic [6:0] bin_bcd;
+    assign bin_bcd = (display_error || error_division ||
                      (b_es_cero && seleccion_display == 2'd2))
-                   ? 6'd0
+                   ? 7'd0
                    : numero_display;
 
     logic [3:0] d0, d1, d2, d3;
@@ -180,7 +184,7 @@ module top(
     binario_a_bcd_fsm u_bcd (
         .clk (clk27),
         .rst (rst),
-        .bin (bin_bcd),
+        .bin ({4'b0, bin_bcd}),   // rellenar los bits altos del puerto de 11 bits
         .d0  (d0),
         .d1  (d1),
         .d2  (d2),

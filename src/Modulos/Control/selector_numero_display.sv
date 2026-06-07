@@ -2,17 +2,17 @@ module selector_numero_display (
     input  logic [1:0] seleccion_display,
     input  logic       sel_resultado,
 
-    input  logic [5:0] numero_a,
-    input  logic [3:0] numero_b,
-    input  logic [5:0] cociente,
-    input  logic [3:0] residuo,
+    input  logic [6:0] numero_a,   // 7 bits (0-127)
+    input  logic [4:0] numero_b,   // 5 bits (0-31)
+    input  logic [6:0] cociente,   // 7 bits
+    input  logic [4:0] residuo,    // 5 bits
 
-    output logic [5:0] numero_display,
+    output logic [6:0] numero_display,
     output logic       display_error
 );
 
     always_comb begin
-        numero_display = 6'd0;
+        numero_display = 7'd0;
         display_error  = 1'b0;
 
         case (seleccion_display)
@@ -33,12 +33,12 @@ module selector_numero_display (
             end
 
             2'd3: begin
-                numero_display = 6'd0;
+                numero_display = 7'd0;
                 display_error  = 1'b1;
             end
 
             default: begin
-                numero_display = 6'd0;
+                numero_display = 7'd0;
                 display_error  = 1'b0;
             end
 
