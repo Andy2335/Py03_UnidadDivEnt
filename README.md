@@ -61,7 +61,7 @@ Montaje paso a paso del proyecto visita:
 
 ## Diagrama de Bloques - Unidad División de Enteros:
 <a href="">
-  <img src="" width="700">
+  <img src="https://github.com/Andy2335/Py03_UnidadDivEnt/blob/6bb05b87e605d0433d7a6879e747e27481df14d8/doc/Imagenes/Sistema%20de%20divisi%C3%B3n%20de%20enteros.png" width="700">
 </a>
 
 ## Jerarquía del sistema
