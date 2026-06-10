@@ -47,7 +47,7 @@ En este proyecto se abordará el diseño e implementación de una unidad de divi
 <img src="https://github.com/Andy2335/Py02DispSec/blob/3f3f60fa3e27a0b1f55e09d4d0992d0f4d454024/doc/Imagenes/Montaje%20Sistema%20Animado.png" width="700">
 
 Montaje paso a paso del proyecto visita:
-[** Wiki Home ** ](https://github.com/Andy2335/Py02DispSec/wiki)
+[** Wiki Home ** ](https://github.com/Andy2335/Py03_UnidadDivEnt/wiki)
 
 ## Estructura de la documentación
 - `README.md`, Descripción general del proyecto
@@ -65,63 +65,35 @@ Montaje paso a paso del proyecto visita:
 </a>
 
 ## Jerarquía del sistema
-- Subsistema de lectura de datos
+```
+                                  display_4dig_mux
+===================================================================================
+ 
+ clk ───► ┌────────────────────────┐  sel[1:0]
+          │   Divisor de frec.     │─────────────────────────┐
+ rst ───► │  cnt[log2(TPD)-1:0]    │                         │
+          └────────────────────────┘                         ▼
+                                                    ┌─────────────────┐
+ d0[3:0] ─────────────────────────────────────────► │    Mux 4:1      │
+ d1[3:0] ─────────────────────────────────────────► │                 │──► digit_val[3:0]
+ d2[3:0] ─────────────────────────────────────────► │  sel → d0/d1/   │
+ d3[3:0] ─────────────────────────────────────────► │        d2/d3    │──► dig_raw[3:0]
+                                                    └─────────────────┘
+                                                             │
+                                                             ▼
+                                                    ┌─────────────────┐
+                                                    │ Decodificador   │
+                                                    │  BCD → 7 seg.   │──► seg_raw[6:0]
+                                                    │   (gfedcba)     │
+                                                    └─────────────────┘
+                                                             │
+                                                             ▼
+                                                    ┌─────────────────┐
+                                                    │ Reg. de salida  │──► seg[6:0]
+                                                    │ (inversión por  │──► dig[3:0]
+                                                    │  COMMON_ANODE)  │
+                                                    └─────────────────┘
 
-    ### Diagrama de bloques:
-    <img src="" width="700">
-
-    ### Circuito lógico:
-    <img src="" width="700">
-
-    ### Visualización de Señales:
-    <img src="" width="700">
-
--  Subsistema de cálculo de división de enteros
-
-    ### Diagrama de bloques:
-    <img src="" width="700">
-
-    ### Circuito lógico:
-    <img src="" width="700">
-
-    ### Visualización de Señales:
-    <img src="" width="700">
-
-- Subsistema de conversión de binario a representación BCD
-
-    ### Diagrama de bloques:
-    <img src="" width="700">
-
-    ### Circuito lógico:
-    <img src="" width="700">
-
-    ### Visualización de Señales:
-    <img src="" width="700">
-
-- Subsistema de despliegue en display de 7 segmentos
-
-    ### Diagrama de bloques:
-    <img src="" width="700">
-
-    ### Circuito lógico:
-    <img src="" width="700">
-
-    ### Visualización de Señales:
-    <img src="" width="700">    
-
-- Testbench y Simulación de Ondas
-  [wiki]()
-
-    El testbench se utilizó para verificar automáticamente el funcionamiento de cada módulo individualmente y del sistema completo. Se diseñaron casos de prueba específicos para cubrir diferentes escenarios, incluyendo casos límite y situaciones comunes. La simulación de ondas permitió observar el comportamiento temporal de las señales, asegurando que el sistema respondiera correctamente a las entradas y produjera las salidas esperadas.
-
-## Resultados
-- 
+```
 
 
-## Mejora en el sistema 
-- 
-[wiki]()
-
-
-## Conclusion
--
