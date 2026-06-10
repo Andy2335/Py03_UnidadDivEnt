@@ -47,7 +47,7 @@ En este proyecto se abordará el diseño e implementación de una unidad de divi
 <img src="https://github.com/Andy2335/Py02DispSec/blob/3f3f60fa3e27a0b1f55e09d4d0992d0f4d454024/doc/Imagenes/Montaje%20Sistema%20Animado.png" width="700">
 
 Montaje paso a paso del proyecto visita:
-[** Wiki Home ** ](https://github.com/Andy2335/Py02DispSec/wiki)
+[** Wiki Home ** ](https://github.com/Andy2335/Py03_UnidadDivEnt/wiki)
 
 ## Estructura de la documentación
 - `README.md`, Descripción general del proyecto
@@ -59,70 +59,57 @@ Montaje paso a paso del proyecto visita:
 - `design`, Implementación lógica programada y funciones.
 - `sim`, Testbenches y archivos de simulación.
 
-## Jerarquía del sistema
-- 4.1 Lector Teclado Hexadecimal - Diagrama de bloques y circuito lógico
-
-    ### Diagrama de bloques:
-    <img src="" width="700">
-
-    ### Circuito lógico:
-    <img src="" width="700">
-
-    ### Visualización de Señales:
-    <img src="" width="700">
-
-- 4.2 Sumador - Diagrama de bloques y circuito lógico
-
-    ### Diagrama de bloques:
-    <img src="" width="700">
-
-    ### Circuito lógico:
-    <img src="" width="700">
-
-    ### Visualización de Señales:
-    <img src="" width="700">
-
-- 4.3 Visualización DecoDisplay7SEG - Diagrama de bloques y circuito lógico
-
-    ### Diagrama de bloques:
-    <img src="" width="700">
-
-    ### Circuito lógico:
-    <img src="" width="700">
-
-    ### Visualización de Señales:
-    <img src="" width="700">
-
-
-- Testbench y Simulación de Ondas
-  [wiki]()
-
-    El testbench se utilizó para verificar automáticamente el funcionamiento 
-
-## Diagrama de Bloques:
-
-El diagrama muestra la estructura funcional del módulo principal del sistema emisor. El dato de entrada de 4 bits es procesado por el codificador, el cual genera una palabra codificada de 7 bits, luego, esta señal es enviada al módulo de inserción de error, donde se puede alterar un bit según el valor de BitError, dando los bits finales del transmisor para que estos pasen al receptor. El dato original también es enviado al decodificador de 7 segmentos para su visualización en el display.
-
-  <a href="">
-  <img src="" width="700">
+## Diagrama de Bloques - Unidad División de Enteros:
+<a href="">
+  <img src="https://github.com/Andy2335/Py03_UnidadDivEnt/blob/6bb05b87e605d0433d7a6879e747e27481df14d8/doc/Imagenes/Sistema%20de%20divisi%C3%B3n%20de%20enteros.png" width="700">
 </a>
 
-## Resultados
-- Pendiente de desarrollo.
+## Diagrama de Bloques - Subsistema de conversión:
+<a href="">
+  <img width="700" src="https://github.com/user-attachments/assets/11a5495d-8691-482a-a8be-186a8616dea6" />
+</a>
+
+## Jerarquía del sistema
+```mermaid
+flowchart LR
+
+    clk[clk]
+    rst[rst]
+
+    subgraph DIV["Divisor de frecuencia"]
+        CNT["cnt[log2(TPD)-1:0]"]
+    end
+
+    clk --> CNT
+    rst --> CNT
+
+    CNT -->|"sel[1:0]"| MUX
+
+    d0["d0[3:0]"] --> MUX
+    d1["d1[3:0]"] --> MUX
+    d2["d2[3:0]"] --> MUX
+    d3["d3[3:0]"] --> MUX
+
+    subgraph MUX["Mux 4:1"]
+        MUXTXT["sel → d0/d1/d2/d3"]
+    end
+
+    MUX -->|"digit_val[3:0]"| DEC
+    MUX -->|"dig_raw[3:0]"| REG
+
+    subgraph DEC["Decodificador BCD → 7 segmentos"]
+        GFEDCBA["gfedcba"]
+    end
+
+    DEC -->|"seg_raw[6:0]"| REG
+
+    subgraph REG["Registro de salida"]
+        INV["Inversión por COMMON_ANODE"]
+    end
+
+    REG --> seg["seg[6:0]"]
+    REG --> dig["dig[3:0]"]
+
+```
 
 
-
-## Mejora en el sistema 
-Pendiente de desarrollo.
-[wiki]()
-
-
-
-
-## Laboratorio  
-Pendiente de desarrollo.
-[wiki]()
-
-
-## Conclusion
-Pendiente de desarrollo.

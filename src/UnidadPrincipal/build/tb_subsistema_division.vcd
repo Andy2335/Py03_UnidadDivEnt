@@ -1,0 +1,253 @@
+$date
+	Tue Jun 09 22:24:57 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module tb_subsistema_division $end
+$var wire 4 ! residuo [3:0] $end
+$var wire 1 " done $end
+$var wire 6 # cociente [5:0] $end
+$var reg 6 $ A [5:0] $end
+$var reg 4 % B [3:0] $end
+$var reg 1 & clk $end
+$var reg 1 ' rst $end
+$var reg 1 ( valid $end
+$var integer 32 ) errores [31:0] $end
+$scope module dut $end
+$var wire 6 * A [5:0] $end
+$var wire 4 + B [3:0] $end
+$var wire 1 & clk $end
+$var wire 1 ' rst $end
+$var wire 1 ( valid $end
+$var parameter 1 , CALCULO $end
+$var parameter 1 - ESPERA $end
+$var reg 6 . cociente [5:0] $end
+$var reg 1 " done $end
+$var reg 1 / estado_actual $end
+$var reg 4 0 residuo [3:0] $end
+$upscope $end
+$scope task probar_division $end
+$var reg 6 1 entrada_A [5:0] $end
+$var reg 4 2 entrada_B [3:0] $end
+$var reg 6 3 esperado_cociente [5:0] $end
+$var reg 4 4 esperado_residuo [3:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+0-
+1,
+$end
+#0
+$dumpvars
+bx 4
+bx 3
+bx 2
+bx 1
+b0 0
+0/
+b0 .
+b0 +
+b0 *
+b0 )
+0(
+1'
+0&
+b0 %
+b0 $
+b0 #
+0"
+b0 !
+$end
+#5000
+1&
+#10000
+0&
+#15000
+1&
+#20000
+1(
+b100 %
+b100 +
+b10100 $
+b10100 *
+0&
+b0 4
+b101 3
+b100 2
+b10100 1
+0'
+#25000
+1/
+1&
+#30000
+0(
+0&
+#35000
+0/
+1"
+b101 #
+b101 .
+1&
+#40000
+0&
+#45000
+0"
+b1 4
+b110 3
+b11001 1
+1&
+#50000
+1(
+b11001 $
+b11001 *
+0&
+#55000
+1/
+1&
+#60000
+0(
+0&
+#65000
+0/
+1"
+b1 !
+b1 0
+b110 #
+b110 .
+1&
+#70000
+0&
+#75000
+0"
+b11 4
+b100 3
+b1111 2
+b111111 1
+1&
+#80000
+1(
+b1111 %
+b1111 +
+b111111 $
+b111111 *
+0&
+#85000
+1/
+1&
+#90000
+0(
+0&
+#95000
+0/
+1"
+b11 !
+b11 0
+b100 #
+b100 .
+1&
+#100000
+0&
+#105000
+0"
+b1 4
+b11 3
+b10 2
+b111 1
+1&
+#110000
+1(
+b10 %
+b10 +
+b111 $
+b111 *
+0&
+#115000
+1/
+1&
+#120000
+0(
+0&
+#125000
+0/
+1"
+b1 !
+b1 0
+b11 #
+b11 .
+1&
+#130000
+0&
+#135000
+0"
+b0 4
+b0 3
+b101 2
+b0 1
+1&
+#140000
+1(
+b101 %
+b101 +
+b0 $
+b0 *
+0&
+#145000
+1/
+1&
+#150000
+0(
+0&
+#155000
+0/
+1"
+b0 !
+b0 0
+b0 #
+b0 .
+1&
+#160000
+0&
+#165000
+0"
+b111111 3
+b0 2
+b11110 1
+1&
+#170000
+1(
+b0 %
+b0 +
+b11110 $
+b11110 *
+0&
+#175000
+1/
+1&
+#180000
+0(
+0&
+#185000
+0/
+1"
+b111111 #
+b111111 .
+1&
+#190000
+0&
+#195000
+0"
+1&
+#200000
+0&
+#205000
+1&
+#210000
+0&
+#215000
+1&
