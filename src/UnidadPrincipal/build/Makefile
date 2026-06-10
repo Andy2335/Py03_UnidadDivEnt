@@ -14,14 +14,14 @@ SOURCES = \
 	$(wildcard $(MODULOS)/Display_7Seg/*.sv) \
 	$(DESIGN)/top.sv
 
-TESTBENCH = ../sim/tb_control_entrada.sv
+TESTBENCH = ../sim/tb_subsistema_division.sv
 
 CONSTRAINTS = ../constr/Constraints.cst
 
 TOP_DESIGN = top
-TOP_TB     = tb_control_entrada
+TOP_TB     = tb_subsistema_division
 
-VCD_FILE = tb_control_entrada.vcd
+VCD_FILE = tb_subsistema_division.vcd
  
 
 #****************
