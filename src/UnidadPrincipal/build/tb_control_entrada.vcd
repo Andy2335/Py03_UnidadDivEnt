@@ -1,0 +1,1412 @@
+$date
+	Tue Jun 09 18:36:56 2026
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module tb_control_entrada $end
+$var wire 1 ! valid $end
+$var wire 2 " seleccion_display [1:0] $end
+$var wire 1 # sel_resultado $end
+$var wire 1 $ rst $end
+$var wire 6 % numero_display [5:0] $end
+$var wire 4 & numero_b [3:0] $end
+$var wire 6 ' numero_a [5:0] $end
+$var wire 1 ( limpiar $end
+$var wire 1 ) error $end
+$var wire 1 * display_error $end
+$var wire 1 + cargar_b $end
+$var wire 1 , cargar_a $end
+$var wire 2 - cantidad_b [1:0] $end
+$var wire 2 . cantidad_a [1:0] $end
+$var wire 1 / borrar_b $end
+$var wire 1 0 borrar_a $end
+$var wire 1 1 b_lleno $end
+$var wire 1 2 b_es_cero $end
+$var wire 1 3 a_lleno $end
+$var wire 1 4 a_es_cero $end
+$var reg 1 5 clk $end
+$var reg 6 6 cociente [5:0] $end
+$var reg 1 7 done $end
+$var reg 4 8 key_code [3:0] $end
+$var reg 1 9 key_valid $end
+$var reg 4 : residuo [3:0] $end
+$var reg 1 ; rst_n $end
+$var integer 32 < errores [31:0] $end
+$scope module u_constructor_a $end
+$var wire 1 5 clk $end
+$var wire 4 = digito [3:0] $end
+$var wire 1 > es_digito_r $end
+$var wire 1 $ rst $end
+$var wire 1 3 lleno $end
+$var wire 1 ( limpiar $end
+$var wire 1 4 es_cero $end
+$var wire 1 , cargar_digito $end
+$var wire 1 0 borrar $end
+$var parameter 32 ? CALC_WIDTH $end
+$var parameter 32 @ MAX_DIGITOS $end
+$var parameter 32 A MAX_VAL $end
+$var parameter 32 B WIDTH $end
+$var reg 1 C borrar_r $end
+$var reg 10 D candidato [9:0] $end
+$var reg 2 E cantidad_digitos [1:0] $end
+$var reg 1 F cargar_r $end
+$var reg 10 G digito_ext [9:0] $end
+$var reg 4 H digito_r [3:0] $end
+$var reg 6 I numero [5:0] $end
+$var reg 10 J numero_ext [9:0] $end
+$var reg 4 K primer_digito [3:0] $end
+$var reg 10 L primer_ext [9:0] $end
+$upscope $end
+$scope module u_constructor_b $end
+$var wire 1 5 clk $end
+$var wire 4 M digito [3:0] $end
+$var wire 1 N es_digito_r $end
+$var wire 1 $ rst $end
+$var wire 1 1 lleno $end
+$var wire 1 ( limpiar $end
+$var wire 1 2 es_cero $end
+$var wire 1 + cargar_digito $end
+$var wire 1 / borrar $end
+$var parameter 32 O CALC_WIDTH $end
+$var parameter 32 P MAX_DIGITOS $end
+$var parameter 32 Q MAX_VAL $end
+$var parameter 32 R WIDTH $end
+$var reg 1 S borrar_r $end
+$var reg 8 T candidato [7:0] $end
+$var reg 2 U cantidad_digitos [1:0] $end
+$var reg 1 V cargar_r $end
+$var reg 8 W digito_ext [7:0] $end
+$var reg 4 X digito_r [3:0] $end
+$var reg 4 Y numero [3:0] $end
+$var reg 8 Z numero_ext [7:0] $end
+$var reg 4 [ primer_digito [3:0] $end
+$var reg 8 \ primer_ext [7:0] $end
+$upscope $end
+$scope module u_control $end
+$var wire 1 3 a_lleno $end
+$var wire 1 2 b_es_cero $end
+$var wire 1 1 b_lleno $end
+$var wire 1 5 clk $end
+$var wire 1 7 done $end
+$var wire 1 ] es_digito $end
+$var wire 4 ^ key_code [3:0] $end
+$var wire 1 9 key_valid $end
+$var wire 1 $ rst $end
+$var parameter 3 _ CALCULANDO $end
+$var parameter 3 ` ERROR $end
+$var parameter 3 a INGRESO_A $end
+$var parameter 3 b INGRESO_B $end
+$var parameter 3 c RESULTADO $end
+$var reg 1 0 borrar_a $end
+$var reg 1 / borrar_b $end
+$var reg 1 , cargar_a $end
+$var reg 1 + cargar_b $end
+$var reg 1 ) error $end
+$var reg 3 d estado [2:0] $end
+$var reg 1 ( limpiar $end
+$var reg 1 # sel_resultado $end
+$var reg 2 e seleccion_display [1:0] $end
+$var reg 1 ! valid $end
+$upscope $end
+$scope module u_reset_inicio $end
+$var wire 1 5 clk $end
+$var wire 1 ; rst_n $end
+$var parameter 32 f CICLOS $end
+$var reg 23 g contador [22:0] $end
+$var reg 1 $ rst $end
+$upscope $end
+$scope module u_selector $end
+$var wire 6 h cociente [5:0] $end
+$var wire 6 i numero_a [5:0] $end
+$var wire 4 j numero_b [3:0] $end
+$var wire 4 k residuo [3:0] $end
+$var wire 1 # sel_resultado $end
+$var wire 2 l seleccion_display [1:0] $end
+$var reg 1 * display_error $end
+$var reg 6 m numero_display [5:0] $end
+$upscope $end
+$scope task mostrar_estado $end
+$upscope $end
+$scope task presionar_tecla $end
+$upscope $end
+$scope task verificar $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+b11 f
+b11 c
+b1 b
+b0 a
+b100 `
+b10 _
+b100 R
+b1001 Q
+b1 P
+b1000 O
+b110 B
+b111111 A
+b10 @
+b1010 ?
+$end
+#0
+$dumpvars
+b0 m
+b0 l
+b0 k
+b0 j
+b0 i
+b0 h
+b0 g
+b0 e
+b0 d
+b0 ^
+1]
+b0 \
+b0 [
+b0 Z
+b0 Y
+b0 X
+b0 W
+0V
+b0 U
+b0 T
+0S
+1N
+b0 M
+b0 L
+b0 K
+b0 J
+b0 I
+b0 H
+b0 G
+0F
+b0 E
+b0 D
+0C
+1>
+b0 =
+b0 <
+0;
+b0 :
+09
+b0 8
+07
+b0 6
+05
+14
+03
+12
+01
+00
+0/
+b0 .
+b0 -
+0,
+0+
+0*
+0)
+0(
+b0 '
+b0 &
+b0 %
+1$
+0#
+b0 "
+0!
+$end
+#5000
+15
+#10000
+05
+#15000
+b1 g
+1;
+15
+#20000
+05
+#25000
+b10 g
+15
+#30000
+05
+#35000
+b11 g
+15
+#40000
+05
+#45000
+0$
+15
+#50000
+05
+#55000
+15
+#60000
+05
+#65000
+15
+#70000
+1,
+19
+b100 8
+b100 =
+b100 M
+b100 ^
+05
+#75000
+b100 D
+b100 G
+b100 T
+b100 W
+b100 H
+1F
+b100 X
+15
+#80000
+0,
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#85000
+b0 T
+b0 W
+b100 %
+b100 m
+b101000 D
+b100 L
+b0 G
+b100 J
+b0 X
+b100 K
+b1 .
+b1 E
+04
+b100 '
+b100 I
+b100 i
+b0 H
+0F
+15
+#90000
+05
+#95000
+15
+#100000
+1,
+19
+b10 8
+b10 =
+b10 M
+b10 ^
+05
+#105000
+b10 T
+b10 W
+b101010 D
+b100 L
+b10 G
+b100 J
+b10 X
+b10 H
+1F
+15
+#110000
+0,
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#115000
+b101010 %
+b101010 m
+b100 L
+b0 G
+b101010 J
+b0 T
+b0 W
+13
+b10 .
+b10 E
+b101010 '
+b101010 I
+b101010 i
+b0 H
+0F
+b0 X
+15
+#120000
+05
+#125000
+15
+#130000
+19
+b1001 8
+b1001 =
+b1001 M
+b1001 ^
+05
+#135000
+b100 L
+b1001 G
+b101010 J
+b1001 T
+b1001 W
+b1001 H
+b1001 X
+15
+#140000
+1]
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#145000
+b0 T
+b0 W
+1N
+b100 L
+b0 G
+b101010 J
+1>
+b0 X
+b0 H
+15
+#150000
+05
+#155000
+15
+#160000
+0]
+19
+b1010 8
+b1010 =
+b1010 M
+b1010 ^
+05
+#165000
+0N
+0>
+b0 %
+b0 m
+b1010 T
+b1010 W
+b100 L
+b1010 G
+b101010 J
+b1 "
+b1 e
+b1 l
+b1010 X
+b1010 H
+b1 d
+15
+#170000
+1]
+b1 "
+b1 e
+b1 l
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#175000
+1>
+1N
+b100 L
+b0 G
+b101010 J
+b0 T
+b0 W
+b0 H
+b0 X
+15
+#180000
+05
+#185000
+15
+#190000
+1+
+b1 "
+b1 e
+b1 l
+19
+b111 8
+b111 =
+b111 M
+b111 ^
+05
+#195000
+b100 L
+b111 G
+b101010 J
+b111 T
+b111 W
+b111 H
+b111 X
+1V
+15
+#200000
+b1 "
+b1 e
+b1 l
+0+
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#205000
+b1 "
+b1 e
+b1 l
+b111 %
+b111 m
+b1000110 T
+b111 \
+b0 W
+b111 Z
+b100 L
+b0 G
+b101010 J
+b111 [
+11
+b1 -
+b1 U
+02
+b111 &
+b111 Y
+b111 j
+b0 X
+0V
+b0 H
+15
+#210000
+05
+#215000
+15
+#220000
+0]
+b111 %
+b111 m
+1!
+b1 "
+b1 e
+b1 l
+19
+b1010 8
+b1010 =
+b1010 M
+b1010 ^
+05
+#225000
+0N
+0>
+b110 %
+b110 m
+b1010000 T
+b111 \
+b1010 W
+b111 Z
+b100 L
+b1010 G
+b101010 J
+b10 "
+b10 e
+b10 l
+0!
+17
+b110 6
+b110 h
+b1010 X
+b1010 H
+b10 d
+15
+#230000
+1]
+b110 %
+b110 m
+b10 "
+b10 e
+b10 l
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#235000
+1>
+1N
+b110 %
+b110 m
+b10 "
+b10 e
+b10 l
+b100 L
+b0 G
+b101010 J
+b1000110 T
+b111 \
+b0 W
+b111 Z
+b11 d
+b0 H
+b0 X
+07
+15
+#240000
+05
+#245000
+15
+#250000
+0]
+b110 %
+b110 m
+b10 "
+b10 e
+b10 l
+19
+b1110 8
+b1110 =
+b1110 M
+b1110 ^
+05
+#255000
+0>
+0N
+b0 %
+b0 m
+b100 L
+b1110 G
+b101010 J
+b1010100 T
+b111 \
+b1110 W
+b111 Z
+1#
+b1110 H
+b1110 X
+15
+#260000
+1]
+b10 "
+b10 e
+b10 l
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#265000
+1N
+1>
+b1000110 T
+b111 \
+b0 W
+b111 Z
+b100 L
+b0 G
+b101010 J
+b0 X
+b0 H
+15
+#270000
+05
+#275000
+15
+#280000
+0]
+b10 "
+b10 e
+b10 l
+19
+b1111 8
+b1111 =
+b1111 M
+b1111 ^
+05
+#285000
+0N
+0>
+b1010101 T
+b111 \
+b1111 W
+b111 Z
+b100 L
+b1111 G
+b101010 J
+b110 %
+b110 m
+b1111 X
+b1111 H
+0#
+15
+#290000
+1]
+b110 %
+b110 m
+b10 "
+b10 e
+b10 l
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#295000
+1>
+1N
+b100 L
+b0 G
+b101010 J
+b1000110 T
+b111 \
+b0 W
+b111 Z
+b0 H
+b0 X
+15
+#300000
+05
+#305000
+15
+#310000
+0]
+b110 %
+b110 m
+1(
+b10 "
+b10 e
+b10 l
+19
+b1100 8
+b1100 =
+b1100 M
+b1100 ^
+05
+#315000
+b0 D
+b0 L
+b0 J
+b0 "
+b0 e
+b0 l
+1(
+b0 %
+b0 m
+b0 T
+b0 \
+b0 Z
+b0 d
+b0 K
+03
+b0 .
+b0 E
+14
+b0 '
+b0 I
+b0 i
+b0 H
+b0 [
+01
+b0 -
+b0 U
+12
+b0 &
+b0 Y
+b0 j
+b0 X
+15
+#320000
+1]
+0(
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#325000
+15
+#330000
+05
+#335000
+15
+#340000
+1,
+19
+b101 8
+b101 =
+b101 M
+b101 ^
+05
+#345000
+b101 T
+b101 W
+b101 D
+b101 G
+b101 X
+b101 H
+1F
+15
+#350000
+0,
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#355000
+b101 %
+b101 m
+b110010 D
+b101 L
+b0 G
+b101 J
+b0 T
+b0 W
+b101 K
+b1 .
+b1 E
+04
+b101 '
+b101 I
+b101 i
+b0 H
+0F
+b0 X
+15
+#360000
+05
+#365000
+15
+#370000
+1,
+19
+b110 8
+b110 =
+b110 M
+b110 ^
+05
+#375000
+b111000 D
+b101 L
+b110 G
+b101 J
+b110 T
+b110 W
+b110 H
+1F
+b110 X
+15
+#380000
+0,
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#385000
+b0 T
+b0 W
+b111000 %
+b111000 m
+b101 L
+b0 G
+b111000 J
+b0 X
+13
+b10 .
+b10 E
+b111000 '
+b111000 I
+b111000 i
+b0 H
+0F
+15
+#390000
+05
+#395000
+15
+#400000
+0]
+10
+19
+b1011 8
+b1011 =
+b1011 M
+b1011 ^
+05
+#405000
+0N
+0>
+b1011 T
+b1011 W
+b101 L
+b1011 G
+b111000 J
+b1011 X
+b1011 H
+1C
+15
+#410000
+1]
+00
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#415000
+1>
+1N
+b101 %
+b101 m
+b110010 D
+b101 L
+b0 G
+b101 J
+b0 T
+b0 W
+03
+b1 .
+b1 E
+b101 '
+b101 I
+b101 i
+b0 H
+0C
+b0 X
+15
+#420000
+05
+#425000
+15
+#430000
+10
+0]
+0,
+19
+b1011 8
+b1011 =
+b1011 M
+b1011 ^
+05
+#435000
+0>
+0N
+b111101 D
+b101 L
+b1011 G
+b101 J
+b1011 T
+b1011 W
+b1011 H
+1C
+b1011 X
+15
+#440000
+1]
+00
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#445000
+1N
+1>
+b0 T
+b0 W
+b0 %
+b0 m
+b0 D
+b0 L
+b0 G
+b0 J
+b0 X
+b0 K
+b0 .
+b0 E
+14
+b0 '
+b0 I
+b0 i
+b0 H
+0C
+15
+#450000
+05
+#455000
+15
+#460000
+0]
+1(
+19
+b1100 8
+b1100 =
+b1100 M
+b1100 ^
+05
+#465000
+b0 X
+b0 H
+15
+#470000
+1]
+0(
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#475000
+15
+#480000
+05
+#485000
+15
+#490000
+1,
+19
+b110 8
+b110 =
+b110 M
+b110 ^
+05
+#495000
+b110 D
+b110 G
+b110 T
+b110 W
+b110 H
+1F
+b110 X
+15
+#500000
+0,
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#505000
+b0 T
+b0 W
+b110 %
+b110 m
+b111100 D
+b110 L
+b0 G
+b110 J
+b0 X
+b110 K
+b1 .
+b1 E
+04
+b110 '
+b110 I
+b110 i
+b0 H
+0F
+15
+#510000
+05
+#515000
+15
+#520000
+1,
+19
+b100 8
+b100 =
+b100 M
+b100 ^
+05
+#525000
+b100 T
+b100 W
+b1000000 D
+b110 L
+b100 G
+b110 J
+b100 X
+b100 H
+1F
+15
+#530000
+0,
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#535000
+b111100 D
+b110 L
+b0 G
+b110 J
+b0 T
+b0 W
+b0 H
+0F
+b0 X
+15
+#540000
+05
+#545000
+15
+#550000
+0]
+1(
+19
+b1100 8
+b1100 =
+b1100 M
+b1100 ^
+05
+#555000
+b0 %
+b0 m
+b0 D
+b0 L
+b0 J
+b0 K
+b0 .
+b0 E
+14
+b0 '
+b0 I
+b0 i
+b0 H
+b0 X
+15
+#560000
+1]
+0(
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#565000
+15
+#570000
+05
+#575000
+15
+#580000
+1,
+19
+b1 8
+b1 =
+b1 M
+b1 ^
+05
+#585000
+b1 T
+b1 W
+b1 D
+b1 G
+b1 X
+b1 H
+1F
+15
+#590000
+0,
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#595000
+b1 %
+b1 m
+b1010 D
+b1 L
+b0 G
+b1 J
+b0 T
+b0 W
+b1 K
+b1 .
+b1 E
+04
+b1 '
+b1 I
+b1 i
+b0 H
+0F
+b0 X
+15
+#600000
+05
+#605000
+15
+#610000
+1,
+19
+b10 8
+b10 =
+b10 M
+b10 ^
+05
+#615000
+b1100 D
+b1 L
+b10 G
+b1 J
+b10 T
+b10 W
+b10 H
+1F
+b10 X
+15
+#620000
+0,
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#625000
+b0 T
+b0 W
+b1100 %
+b1100 m
+b1 L
+b0 G
+b1100 J
+b0 X
+13
+b10 .
+b10 E
+b1100 '
+b1100 I
+b1100 i
+b0 H
+0F
+15
+#630000
+05
+#635000
+15
+#640000
+0]
+19
+b1010 8
+b1010 =
+b1010 M
+b1010 ^
+05
+#645000
+0N
+0>
+b0 %
+b0 m
+b1010 T
+b1010 W
+b1 L
+b1010 G
+b1100 J
+b1 "
+b1 e
+b1 l
+b1010 X
+b1010 H
+b1 d
+15
+#650000
+1]
+b1 "
+b1 e
+b1 l
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#655000
+1>
+1N
+b1 L
+b0 G
+b1100 J
+b0 T
+b0 W
+b0 H
+b0 X
+15
+#660000
+05
+#665000
+15
+#670000
+1+
+b1 "
+b1 e
+b1 l
+19
+05
+#675000
+1V
+15
+#680000
+b1 "
+b1 e
+b1 l
+0+
+09
+05
+#685000
+b1 "
+b1 e
+b1 l
+11
+b1 -
+b1 U
+0V
+15
+#690000
+05
+#695000
+15
+#700000
+0]
+b1 "
+b1 e
+b1 l
+19
+b1010 8
+b1010 =
+b1010 M
+b1010 ^
+05
+#705000
+0N
+0>
+1*
+b1010 T
+b1010 W
+b1 L
+b1010 G
+b1100 J
+1)
+b11 "
+b11 e
+b11 l
+b1010 X
+b1010 H
+b100 d
+15
+#710000
+1]
+1*
+b11 "
+b11 e
+b11 l
+1)
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#715000
+1>
+1N
+b1 L
+b0 G
+b1100 J
+b0 T
+b0 W
+b0 H
+b0 X
+15
+#720000
+05
+#725000
+15
+#730000
+0]
+1*
+1(
+b11 "
+b11 e
+b11 l
+1)
+19
+b1101 8
+b1101 =
+b1101 M
+b1101 ^
+05
+#735000
+0*
+b0 D
+b0 L
+b0 J
+b0 "
+b0 e
+b0 l
+0)
+1(
+b0 d
+b0 K
+03
+b0 .
+b0 E
+14
+b0 '
+b0 I
+b0 i
+b0 H
+01
+b0 -
+b0 U
+b0 X
+15
+#740000
+1]
+0(
+b0 8
+b0 =
+b0 M
+b0 ^
+09
+05
+#745000
+15
+#750000
+05
+#755000
+15
+#756000
