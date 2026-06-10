@@ -169,7 +169,7 @@ module top(
         .display_error     (display_error)
     );
 
-    logic [5:0] bin_bcd;
+    logic [10:0] bin_bcd;
     assign bin_bcd = (display_error || error_division || 
                      (b_es_cero && seleccion_display == 2'd2))
                    ? 6'd0
